@@ -1,8 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, User
 from django.db.models.fields.related import OneToOneField
-from django.db.models.signals import post_save, pre_save
-from django.dispatch import receiver
+
 
 
 # Create your models here.
@@ -109,6 +108,7 @@ class userProfile(models.Model):
 
     def __str__(self):
         return self.user.email
+
 # the below is creating an error with empty email field or user field    
 # @receiver(post_save, sender=User)
 # def post_save_create_profile_receiver(sender, instance, created, **kwargs):
@@ -119,21 +119,3 @@ class userProfile(models.Model):
     
 
 #post_save.connect(post_save_create_profile_receiver, sender=User) using singals https://docs.djangoproject.com/en/4.2/ref/signals/
-
-@receiver(post_save, sender=User)
-def post_save_create_profile_receiver(sender, instance, created, **kwargs):
-    if created and instance.email:
-        userProfile.objects.create(user=instance)
-        print('User profile created')
-    else:
-        try:
-            profile = userProfile.objects.get(user=instance)
-            profile.save
-        except:
-            #create a userprofile only if it doesnt exist
-            print('Profile was not found')
-        print('the user has been updated sucessfully')
-
-@receiver(pre_save, sender=User)
-def per_save_profile(sender, instance, **kwargs):
-    print(instance.username, 'user has been saved sucessfully')
