@@ -40,6 +40,10 @@ def registerUser(request):
     context['form'] = form
     return render(request, 'accounts/registerUser.html', context)
 
+def registerBusiness(request):
+    return render (request, 'accounts/registerBusiness.html')
+
+
 
     
 
