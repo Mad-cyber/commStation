@@ -1,5 +1,7 @@
 from django.shortcuts import render , redirect
 from django.http import HttpResponse
+
+from business.forms import BussForm
 from .forms import UserForm
 from .models import User, userProfile
 from django.contrib import messages
@@ -41,7 +43,39 @@ def registerUser(request):
     return render(request, 'accounts/registerUser.html', context)
 
 def registerBusiness(request):
-    return render (request, 'accounts/registerBusiness.html')
+    if request.method =='POST':
+        #store data and creare the business
+        form = UserForm(request.POST)
+        b_form = BussForm(request.POST)
+        if form.is_valid() and b_form.is_valid:
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            user = User.objects.create_user(first_name = first_name, last_name = last_name, username = username, email = email, password = password)
+            user.role = User.BUSINESS
+            user.save()
+            business = b_form.save(commit=False)
+            business.user = user
+            user_profile = userProfile.objects.get(user=user)
+            business.user_profile = user_profile 
+            business.save()
+            messages.success(request, 'Your business has been saved sucesfully and is now under approval')
+            return redirect('registerBusiness')
+        else: 
+            print('invalid form')
+            print(form.errors)
+    else:
+        form = UserForm()
+        b_form = BussForm()
+
+    context = {
+        'form': form,
+        'b_form': b_form,
+
+    }
+    return render (request, 'accounts/registerBusiness.html', context)
 
 
 
