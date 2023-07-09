@@ -7,7 +7,7 @@
                     <div class="logo">
                         <figure>
                             <a href="{% url 'home' %}" class="light-logo">
-                                <img src="{% static 'extra-images/comm_Logo.png' %}" alt="commLogo" width = "150" height = "100">
+                                <img src="{% static 'extra-images/communcation station-logos_black.png' %}" alt="commLogo" width = "150" height = "100">
                             </a>
                         </figure>
                     </div>
@@ -67,10 +67,10 @@
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                     <div class="login-option">
-                        <a class="cs-color cs-popup-joinus-btn login-popup" data-target="#sign-in" data-toggle="modal" href="#user-register">Login / 
+                        <a class="cs-color cs-popup-joinus-btn login-popup"  href="{% url 'login' %}">Login / 
                             <span><a href ="{% url 'registerUser' %}" class = "cs-color cs-popup-joinus-btn login-popup" >Register</a></span><a class="get-start-btn" href="{% url 'registerBusiness' %}">
                             Register
-                            Restaurant </a>
+                            Business </a>
                     </div>
                 </div>
             </div>

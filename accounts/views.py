@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from business.forms import BussForm
 from .forms import UserForm
 from .models import User, userProfile
-from django.contrib import messages
+from django.contrib import messages, auth
 
 # Create your views here.
 # create user with form from website
@@ -76,6 +76,32 @@ def registerBusiness(request):
 
     }
     return render (request, 'accounts/registerBusiness.html', context)
+# manage form details for login, logour and loop incase of error or mistype of passowrd
+
+def login(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        password = request.POST['password']
+
+        user = auth.authenticate(email=email, password=password)
+
+        if user is not None:
+            auth.login(request, user)
+            messages.success(request, 'You have logged in successfully')
+            return redirect('dashboard')
+        else:
+            messages.error(request, 'Invalid login details. Please check your details and try again')
+            return redirect('login')
+
+    return redirect('login')  # Redirect to the login page if the request method is not POST
+
+def logout(request):
+    auth.logout(request)
+    messages.info(request, 'You are now logged out.')
+    return redirect('login')
+
+def dashboard(request):
+    return render(request, 'accounts/dashboard.html')
 
 
 
