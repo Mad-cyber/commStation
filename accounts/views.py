@@ -5,13 +5,35 @@ from business.forms import BussForm
 from .forms import UserForm
 from .models import User, userProfile
 from django.contrib import messages, auth
+from django.contrib.auth import authenticate, login as auth_login
+from .utils import detectUser
+from django.contrib.auth.decorators import login_required, user_passes_test
+
+from django.core.exceptions import PermissionDenied
 
 # Create your views here.
+
+#restrict user access to wrong dashbaords
+def check_role_buss(user):
+    if user.role == 1:
+        return True
+    else:
+        raise PermissionDenied
+    
+def check_role_customer(user):
+    if user.role == 2:
+        return True
+    else:
+        raise PermissionDenied
+
 # create user with form from website
 def registerUser(request):
     context = {}
+    if request.user.is_authenticated:
+        messages.warning(request, 'You have already logged into your account')
+        return redirect('dashboard')
 
-    if request.method == 'POST':
+    elif request.method == 'POST':
         form = UserForm(request.POST)
         if form.is_valid():
             # password = form.cleaned_data['password']
@@ -43,7 +65,10 @@ def registerUser(request):
     return render(request, 'accounts/registerUser.html', context)
 
 def registerBusiness(request):
-    if request.method =='POST':
+    if request.user.is_authenticated:
+        messages.warning(request, 'You have already logged into your account')
+        return redirect('dashboard')
+    elif request.method =='POST':
         #store data and creare the business
         form = UserForm(request.POST)
         b_form = BussForm(request.POST)
@@ -78,30 +103,54 @@ def registerBusiness(request):
     return render (request, 'accounts/registerBusiness.html', context)
 # manage form details for login, logour and loop incase of error or mistype of passowrd
 
-def login(request):
-    if request.method == 'POST':
+#manages the pages based on the user roles and permissions for logging in
+def user_login(request):
+    if request.user.is_authenticated:
+        messages.warning(request, 'You have already logged into your account')
+        return redirect('dashboard')
+    elif request.method == 'POST':
         email = request.POST['email']
         password = request.POST['password']
 
-        user = auth.authenticate(email=email, password=password)
+        user = authenticate(request, email=email, password=password)
 
         if user is not None:
-            auth.login(request, user)
-            messages.success(request, 'You have logged in successfully')
-            return redirect('dashboard')
+            auth_login(request, user)  # Rename the function call to auth_login
+            messages.success(request, 'You have successfully logged in.')
+            return redirect('myAccount')
         else:
-            messages.error(request, 'Invalid login details. Please check your details and try again')
+            messages.error(request, 'Invalid login details. Please check and try again.')
             return redirect('login')
 
-    return redirect('login')  # Redirect to the login page if the request method is not POST
+    return render(request, 'accounts/login.html')
 
 def logout(request):
     auth.logout(request)
-    messages.info(request, 'You are now logged out.')
+    messages.info(request, 'You have logged out succesfully')
     return redirect('login')
 
-def dashboard(request):
-    return render(request, 'accounts/dashboard.html')
+@login_required(login_url='login')
+def myAccount(request):
+    user = request.user
+    redirectUrl = detectUser(user)
+    return redirect(redirectUrl)
+
+@login_required(login_url='login')
+@user_passes_test(check_role_buss)
+def bussDash(request):
+    return render(request, 'accounts/bussDash.html')
+
+@login_required(login_url='login')
+@user_passes_test(check_role_customer)
+def custDash(request):
+    return render(request, 'accounts/custDash.html')
+
+
+
+
+
+
+
 
 
 

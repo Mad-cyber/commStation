@@ -92,6 +92,12 @@ class User(AbstractBaseUser):
     
     def has_module_perms(self,app_label):
         return True
+    def get_role(self):
+        if self.role == 1:
+            user_role = "Business"
+        elif self.role == 2:
+            user_role = 'Customer'
+        return user_role
     
 class userProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
@@ -108,6 +114,7 @@ class userProfile(models.Model):
 
     def __str__(self):
         return self.user.email
+
 
 # the below is creating an error with empty email field or user field    
 # @receiver(post_save, sender=User)
