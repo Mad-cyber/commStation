@@ -6,8 +6,10 @@ from .forms import UserForm
 from .models import User, userProfile
 from django.contrib import messages, auth
 from django.contrib.auth import authenticate, login as auth_login
-from .utils import detectUser
+from .utils import detectUser, send_verification_email
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib.auth.tokens import default_token_generator
 
 from django.core.exceptions import PermissionDenied
 
@@ -52,6 +54,10 @@ def registerUser(request):
             user = User.objects.create_user(first_name = first_name, last_name = last_name, username = username, email = email, password = password)
             user.role = User.CUSTOMER  # Assign the role to the user
             user.save()
+
+            #send email verifcation
+            send_verification_email(request, user)
+
             messages.success(request, 'Your accounts has been registered!')
             return redirect('registerUser')
         else:
@@ -86,6 +92,10 @@ def registerBusiness(request):
             user_profile = userProfile.objects.get(user=user)
             business.user_profile = user_profile 
             business.save()
+
+            #send verifcation email business 
+            send_verification_email(request,user)
+
             messages.success(request, 'Your business has been saved sucesfully and is now under approval')
             return redirect('registerBusiness')
         else: 
@@ -101,6 +111,26 @@ def registerBusiness(request):
 
     }
     return render (request, 'accounts/registerBusiness.html', context)
+
+def activate(request, uidb64, token ):
+    #activate user email from token vertifcation(setting =True)
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User._default_manager.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, 'Your account has been sucessfully verifed and is now active! Thank you for your interest')
+        return redirect ('myAccount')
+    else:
+        messages .error(request, 'invalid link, please try again')
+        return redirect ('myAccount')
+    
+
+
 # manage form details for login, logour and loop incase of error or mistype of passowrd
 
 #manages the pages based on the user roles and permissions for logging in
@@ -144,6 +174,15 @@ def bussDash(request):
 @user_passes_test(check_role_customer)
 def custDash(request):
     return render(request, 'accounts/custDash.html')
+
+def forgot_password(request):
+    return render(request, 'accounts/forgot_password.html')
+
+def reset_password_validate(request, uidb64, token):
+    return
+
+def reset_password(request):
+    return render(request, 'accounts/reset_password.html')
 
 
 

@@ -11,6 +11,13 @@ urlpatterns = [
     path('login/', views.user_login, name='login'),
     path('logout/', views.logout, name='logout'),
     path('myAccount/', views.myAccount, name='myAccount'),
-    path('custDash/', views.custDash, name='custDash'),  # Updated URL pattern for dashboard
-    path('bussDash/', views.bussDash, name='bussDash'),  # Updated URL pattern for dashboard
-]
+    path('custDash/', views.custDash, name='custDash'), 
+    path('bussDash/', views.bussDash, name='bussDash'),  
+
+    path ('activate/<uidb64>/<token>/', views.activate, name='activate'),
+
+    path('forgot_password/', views.forgot_password, name='forgot_password'),
+    path('reset_password_validate/<uid64>/<token>/', views.reset_password_validate, name='reset_password_validate'),
+    path('reset_password/', views.reset_password, name='reset_password'),
+
+    ]
