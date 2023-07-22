@@ -1,12 +1,14 @@
 from django.shortcuts import render , redirect
-from django.http import HttpResponse
+from django.contrib.auth.hashers import make_password
+from django.urls import reverse
 
 from business.forms import BussForm
+from django.utils.encoding import force_bytes
 from .forms import UserForm
 from .models import User, userProfile
 from django.contrib import messages, auth
-from django.contrib.auth import authenticate, login as auth_login
-from .utils import detectUser, send_verification_email, send_password_reset_email
+from django.contrib.auth import authenticate, get_user_model, login as auth_login
+from .utils import detectUser, send_verification_email
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
@@ -78,7 +80,7 @@ def registerBusiness(request):
         #store data and creare the business
         form = UserForm(request.POST)
         b_form = BussForm(request.POST)
-        if form.is_valid() and b_form.is_valid:
+        if form.is_valid() and b_form.is_valid():
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
             username = form.cleaned_data['username']
@@ -94,7 +96,9 @@ def registerBusiness(request):
             business.save()
 
             #send verifcation email business 
-            send_verification_email(request,user)
+            mail_subject = 'Please activate your account'
+            email_template = 'accounts\emails\account_verif_email.html'
+            send_verification_email(request,user, mail_subject, email_template)
 
             messages.success(request, 'Your business has been saved sucesfully and is now under approval')
             return redirect('registerBusiness')
@@ -175,6 +179,7 @@ def bussDash(request):
 def custDash(request):
     return render(request, 'accounts/custDash.html')
 
+
 def forgot_password(request):
     if request.method == 'POST':
         email = request.POST['email']
@@ -182,8 +187,10 @@ def forgot_password(request):
         if User.objects.filter(email=email).exists():
             user = User.objects.get(email__exact=email)    
 
-            #send reset password email
-            send_password_reset_email(request, user)
+            #send reset password email, used verfication email function instead to make it more efficient
+            mail_subject = 'Reset Password Link'
+            email_template = 'accounts/emails/reset_password_email.html'
+            send_verification_email(request, user, mail_subject, email_template)
 
             messages.success(request, 'You password reset link has been sent to the added email address')
             return redirect('login')
@@ -193,21 +200,77 @@ def forgot_password(request):
 
     return render(request, 'accounts/forgot_password.html')
 
+
+
+
 def reset_password_validate(request, uidb64, token):
-    #validate user by decoding the token and primary key
-    return
+    User = get_user_model()
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
 
-def reset_password(request):
-    return render(request, 'accounts/reset_password.html')
-
-
-
-
-
-
-
-
-
-
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == 'POST':
+            password = request.POST['password']
+            user.set_password(password)
+            user.save()
+            messages.success(request, 'Your password has been reset successfully. Please log in with your new password.')
+            return redirect('login')
+        else:
+            context = {
+                'uidb64': uidb64,
+                'token': token,
+            }
+            return render(request, 'accounts/reset_password.html', context)
+    else:
+        messages.error(request, 'Invalid reset password link.')
+        return render(request, 'accounts/login.html')
     
+def reset_password(request, uidb64, token):
+    User = get_user_model()
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode('utf-8')
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
 
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == 'POST':
+            password = request.POST['password']
+            user.set_password(password)
+            user.save()
+            messages.success(request, 'Your password has been reset successfully. Please log in with your new password.')
+            return redirect('login')
+        else:
+            context = {
+                'uidb64': uidb64,
+                'token': token,
+            }
+            return render(request, 'accounts/reset_password.html', context)
+    else:
+        messages.error(request, 'Invalid reset password link.')
+        
+        return render(request, 'accounts/forgot_password.html')
+
+
+# def reset_password_validate(request, uidb64, token):
+#     User = get_user_model()
+#     try:
+#         uid = urlsafe_base64_decode(uidb64).decode()
+#         user = User.objects.get(pk=uid)
+#     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+#         user = None
+
+#     if user is not None and default_token_generator.check_token(user, token):
+#         request.session['uid'] = uid
+#         messages.info(request, 'Please reset your password')
+#         return redirect('reset_password')
+#     else:
+#         messages.error(request, 'Invalid reset password link.')
+#         return redirect('myAccount')
+
+
+# def reset_password(request):
+#     return render(request, 'accounts/emails/reset_password_email.html')
