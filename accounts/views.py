@@ -79,7 +79,7 @@ def registerBusiness(request):
     elif request.method =='POST':
         #store data and creare the business
         form = UserForm(request.POST)
-        b_form = BussForm(request.POST)
+        b_form = BussForm(request.POST, request.FILES)
         if form.is_valid() and b_form.is_valid():
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
@@ -97,10 +97,10 @@ def registerBusiness(request):
 
             #send verifcation email business 
             mail_subject = 'Please activate your account'
-            email_template = 'accounts\emails\account_verif_email.html'
+            email_template = 'accounts/emails/account_verif_email.html'
             send_verification_email(request,user, mail_subject, email_template)
 
-            messages.success(request, 'Your business has been saved sucesfully and is now under approval')
+            messages.success(request, 'Your business has been saved sucessfully and is now under approval')
             return redirect('registerBusiness')
         else: 
             print('invalid form')

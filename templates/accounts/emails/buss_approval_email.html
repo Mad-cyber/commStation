@@ -1,0 +1,18 @@
+{% autoescape off %}
+
+Hi {{user.first_name}}, 
+
+{% if is_approved %}
+You have been Approved for Communcation Station!
+Your information has been verifed by our business team here with the Station Team. 
+Welcome to the team!
+if you need assistance with setting up your account please reach out to our suppoer team at station@stationteam.com
+
+{% else %}
+We regret to infrom to inform you that you application has been rejected
+We could not verify your business information. Please send your VAT certifcate and proof of address for your area. 
+Kind regards, 
+Communcation Station Team
+{% endif %}
+
+{% endautoescape %}
