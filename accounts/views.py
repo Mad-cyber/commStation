@@ -201,8 +201,6 @@ def forgot_password(request):
     return render(request, 'accounts/forgot_password.html')
 
 
-
-
 def reset_password_validate(request, uidb64, token):
     User = get_user_model()
     try:
