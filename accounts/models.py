@@ -72,10 +72,8 @@ class User(AbstractBaseUser):
     last_login = models.DateTimeField(auto_now_add=True)
     created_date = models.DateTimeField(auto_now_add=True)
     modifed_date = models.DateTimeField(auto_now_add=True)
-    #is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
-    #is_superadmin = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
@@ -114,15 +112,5 @@ class userProfile(models.Model):
 
     def __str__(self):
         return self.user.email
-
-
-# the below is creating an error with empty email field or user field    
-# @receiver(post_save, sender=User)
-# def post_save_create_profile_receiver(sender, instance, created, **kwargs):
-#     print(created)
-#     if created:
-#         userProfile.objects.create(user=instance)
-#         print('user profile is created')
-    
 
 #post_save.connect(post_save_create_profile_receiver, sender=User) using singals https://docs.djangoproject.com/en/4.2/ref/signals/

@@ -1,7 +1,7 @@
 {% load static %}
-
-
-<div class="page-section restaurant-detail-image-section" style="background: url({% static 'extra-images/cover-dash.jpg' %}) no-repeat center / cover; ">
+<!-- {% debug %} https://docs.djangoproject.com/en/4.2/ref/logging/ -->
+<!-- come back to this the values are not passing from the models.py and views.py to the covner photo  -->
+<div class="page-section restaurant-detail-image-section" style="background: url({{business.user_profile.cover_photo.url}}) no-repeat center / cover; ">
 
     <!-- Container Start -->
     <div class="container">
@@ -13,15 +13,16 @@
                     <div class="company-info">
                         <div class="img-holder">
                             <figure>
-                                <img src="{% static 'extra-images/kerrie-logo.png' %}" alt="takeaway-img">
+                                <img src="{{ business.user_profile.profile_picture.url }}">
                             </figure>
                         </div>
 
                         <div class="text-holder">
-                            <span class="restaurant-title">Restaurant Demo</span>
+                            <span class="restaurant-title">{{ business.bus_name }}
+                            </span>
                             <div class="text">
                                 <i class="icon-location"></i>
-                                <p>Mark ricardo road, lane 27, Austin, Texas, USA.</p>
+                                <p>{{ business.bus_address }}</p>
                             </div>
                         </div>
                     </div>
@@ -33,3 +34,4 @@
     </div>
     <!-- Container End -->
 </div>
+
