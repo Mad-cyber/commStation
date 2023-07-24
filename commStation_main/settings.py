@@ -66,7 +66,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'accounts.context_processors.get_business'
+                'accounts.context_processors.get_business', 
+                'accounts.context_processors.get_google_api',
             ],
         },
     },
@@ -160,29 +161,33 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = 'CommStation Confirmation Email <businesst781@gmail.com>'
 EMAIL_USE_TLS = True
 
-#checking errors
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'DEBUG',  
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'commStation': { 
-            'handlers': ['console'],
-            'level': 'DEBUG',  
-            'propagate': False,
-        },
-    },
-}
+#adding Google APi for maps
+
+GOOGLE_API_KEY = config('GOOGLE_API_KEY')
+
+# #checking errors
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'root': {
+#         'handlers': ['console'],
+#         'level': 'DEBUG',  
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'INFO',
+#             'propagate': False,
+#         },
+#         'commStation': { 
+#             'handlers': ['console'],
+#             'level': 'DEBUG',  
+#             'propagate': False,
+#         },
+#     },
+# }
