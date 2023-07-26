@@ -9,6 +9,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from accounts.views import check_role_buss
 
 from menu.models import Category, menuItem
+from menu.forms import CategoryForm
+from django.template.defaultfilters import slugify
 
 def get_business(request):
     business = Business.objects.get(user=request.user)
@@ -50,7 +52,7 @@ def b_profile(request):
 @user_passes_test(check_role_buss)
 def menu_builder(request):
     business = get_business(request)
-    categories = Category.objects.filter(business=business)
+    categories = Category.objects.filter(business=business).order_by('created_at')
     context = {
         'categories':categories,
 
@@ -70,5 +72,57 @@ def menuItem_by_category(request, pk=None):
     }
     return render (request, 'business/menuItem_by_category.html', context)
 
+from django.db import IntegrityError
+
 def add_category(request):
-    return render(request, 'business/add_category.html')
+    if request.method =='POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            category_name = form.cleaned_data['category_name']
+            category = form.save(commit=False)
+            category.business = get_business(request)
+            category.slug = slugify(category_name)
+            try:
+                form.save()
+                messages.success(request, 'New Category has been created sucessfully!')
+                return redirect('menu_builder')
+            except IntegrityError:
+                form.add_error(None, "A category with this slug already exists.")
+    else:
+        form = CategoryForm()
+    context = {
+        'form': form,
+    }
+    return render(request, 'business/add_category.html', context)
+
+def edit_category(request, pk=None):
+    category = get_object_or_404(Category, pk=pk)
+    if request.method =='POST':
+        form = CategoryForm(request.POST, instance=category)
+        if form.is_valid():
+            category_name = form.cleaned_data['category_name']
+            category = form.save(commit=False)
+            category.business = get_business(request)
+            category.slug = slugify(category_name)
+            try:
+                form.save()
+                messages.success(request, 'New Category has been created sucessfully!')
+                return redirect('menu_builder')
+            except IntegrityError:
+                form.add_error(None, "A category with this slug already exists.")
+    else:
+        form = CategoryForm(instance=category)
+    context = {
+        'form': form,
+        'category': category,
+    }
+
+    return render(request, 'business/edit_category.html', context)
+
+def delete_category(request,pk=None):
+    category =get_object_or_404(Category, pk=pk)
+    category.delete()
+    messages.success(request, 'Category has been deleted!')
+    return redirect('menu_builder')
+
+

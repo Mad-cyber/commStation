@@ -19,13 +19,13 @@
                             <h5 class="text-uppercase">Build your business services!</h5>
                             <hr>
 
-                            <h6>Add Category</h6>
+                            <h6>Edit your Categories </h6>
 
                             <!-- <a href="#" class="btn btn-secondary float-right m-1"><i class="fa fa-plus"></i>Add Service Items</a>
                                 <a href="#" class="btn btn-primary float-right m-1"><i class="fa fa-plus"></i>Add Category</a> -->
 
                             <!-- CRUD form Category -->
-                            <form action="{% url 'add_category' %}" method="POST">
+                            <form action="{% url 'edit_category' category.id %}" method="POST">
                                 {% csrf_token %}
                                 <!-- {{form}} -->
                                 <div class="form-fields-set">
@@ -54,22 +54,13 @@
 
                                 {% endfor %}
 
-                                <button type="submit" class="btn btn-info"><i class="fa-solid fa-arrow-right"></i>
-                                    Create </button>
+                                <button type="submit" class="btn btn-info"><i class="fa-solid fa-pen-nib"></i>
+                                    Update </button>
 
 
                             </form>
 
                             <!-- End form -->
-
-
-
-
-
-
-
-
-
 
                         </div>
                     </div>
