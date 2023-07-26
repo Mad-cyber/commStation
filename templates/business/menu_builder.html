@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+<!-- Main Section Start -->
+<div class="main-section">
+    {% include 'includes/cover.html' %}
+    <div class="page-section account-header buyer-logged-in">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                    <!-- add side bar -->
+                    {% include 'includes/buss_sidebar.html' %}
+                </div>
+                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                    <div class="user-dashboard loader-holder">
+                        <div class="user-holder">
+                            <h5 class="text-uppercase">Build your buiness services!</h5>
+                            <hr>
+                            <table class="table table-striped table-hover table-borderless">
+                                <h6>Service Options for your business</h6>
+                                <a href="#" class="btn btn-secondary float-right m-1"><i class="fa fa-plus"></i>Add Service Items</a>
+                                <a href="#" class="btn btn-primary float-right m-1"><i class="fa fa-plus"></i>Add Category</a>
+                                    <tbody>
+                                        {% for cat in categories %}
+                                      <tr>
+                                        <th class ='text-left'>{{ forloop.counter }}</th>
+                                        <td class ='text-left'>
+                                            <a href="{% url 'menuItem_by_category' cat.id %}"> <p class="mb-0 font-weight-bold"> {{cat}} </p>
+                                            <small class="text-muted"> {{cat.description}} </small>
+                                            </a>
+                                            
+                                        </td>
+                                        <td> <i class="fa fa-edit"></i> &nbsp; <i class="fa fa-trash text-danger"></i></td>
+                                        
+                                      </tr>
+                                      
+                                      {% endfor %}
+                                    </tbody>
+                                  
+                              </table>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main Section End -->
+
+{% include 'includes/alerts.html' %}
+
+{% endblock %}
