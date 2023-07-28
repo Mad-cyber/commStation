@@ -18,6 +18,9 @@
                         <div class="user-holder">
                             <h5 class="text-uppercase">Build your business services!</h5>
                             <hr>
+                            <button class="btn btn-secondary" onclick="history.back()"> <i class="fa fa-angle-left"></i>
+                                Back </button>
+                            <br><br>
 
                             <h6>Edit your Categories </h6>
 
@@ -45,10 +48,10 @@
                                 </div>
 
                                 {% for field in form %}
-                                  {% if field.errors %}
-                                   {% for error in field.errors %}
-                                     <li style="color: red;">{{ error }}</li>
-                                    {% endfor %}
+                                {% if field.errors %}
+                                {% for error in field.errors %}
+                                <li style="color: red;">{{ error }}</li>
+                                {% endfor %}
 
                                 {% endif %}
 
@@ -56,6 +59,12 @@
 
                                 <button type="submit" class="btn btn-info"><i class="fa-solid fa-pen-nib"></i>
                                     Update </button>
+
+                                <a href="{% url 'delete_category' category.id %}"
+                                    onclick="return confirm('Are you sure you want to delete this category? You will not be able to remove it once complete')"
+                                    class="btn btn-danger">
+                                    <i class="fa fa-trash"></i> Delete
+                                </a>
 
 
                             </form>

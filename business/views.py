@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from accounts.views import check_role_buss
 
 from menu.models import Category, menuItem
-from menu.forms import CategoryForm
+from menu.forms import CategoryForm, menuItemForm
 from django.template.defaultfilters import slugify
 
 def get_business(request):
@@ -74,6 +74,8 @@ def menuItem_by_category(request, pk=None):
 
 from django.db import IntegrityError
 
+@login_required(login_url='login')
+@user_passes_test(check_role_buss)
 def add_category(request):
     if request.method =='POST':
         form = CategoryForm(request.POST)
@@ -95,6 +97,9 @@ def add_category(request):
     }
     return render(request, 'business/add_category.html', context)
 
+
+@login_required(login_url='login')
+@user_passes_test(check_role_buss)
 def edit_category(request, pk=None):
     category = get_object_or_404(Category, pk=pk)
     if request.method =='POST':
@@ -106,7 +111,7 @@ def edit_category(request, pk=None):
             category.slug = slugify(category_name)
             try:
                 form.save()
-                messages.success(request, 'New Category has been created sucessfully!')
+                messages.success(request, 'Category has been updated sucessfully!')
                 return redirect('menu_builder')
             except IntegrityError:
                 form.add_error(None, "A category with this slug already exists.")
@@ -119,10 +124,99 @@ def edit_category(request, pk=None):
 
     return render(request, 'business/edit_category.html', context)
 
+@login_required(login_url='login')
+@user_passes_test(check_role_buss)
 def delete_category(request,pk=None):
     category =get_object_or_404(Category, pk=pk)
     category.delete()
     messages.success(request, 'Category has been deleted!')
     return redirect('menu_builder')
+
+
+@login_required(login_url='login')
+@user_passes_test(check_role_buss)
+def add_menu(request):
+    if request.method =='POST':
+        form = menuItemForm(request.POST, request.FILES)
+        if form.is_valid():
+            menu_title = form.cleaned_data['menu_title']
+            menu = form.save(commit=False)
+            menu.business = get_business(request)
+            menu.slug = slugify(menu_title)
+            try:
+                form.save()
+                messages.success(request, 'New Service Item has been created sucessfully!')
+                return redirect('menuItem_by_category', menu.category.id)
+            except IntegrityError:
+                form.add_error(None, "A service with this slug already exists.")
+    else:
+        form = menuItemForm()
+    context = {
+        'form': form,
+    }
+    form = menuItemForm()
+    context = {
+        'form': form,
+    }
+    return render(request, 'business/add_menu.html', context)
+
+@login_required(login_url='login')
+@user_passes_test(check_role_buss)
+def edit_menu(request, pk=None):
+    menu_item = get_object_or_404(menuItem, pk=pk)
+    if request.method == 'POST':
+        form = menuItemForm(request.POST, request.FILES, instance=menu_item)
+        if form.is_valid():
+            menu_title = form.cleaned_data['menu_title']
+            menu_item = form.save(commit=False)
+            menu_item.business = get_business(request)
+            menu_item.slug = slugify(menu_title)
+            try:
+                form.save()
+                messages.success(request, 'Service has been updated successfully!')
+                return redirect('menuItem_by_category', menu_item.category.id) 
+            except IntegrityError:
+                form.add_error(None, "A service with this slug already exists.")
+    else:
+        form = menuItemForm(instance=menu_item)
+    context = {
+        'form': form,
+        'menu_item': menu_item,  
+    }
+
+    return render(request, 'business/edit_menu.html', context)
+
+
+@login_required(login_url='login')
+@user_passes_test(check_role_buss)
+def delete_menu(request,pk=None):
+    menu_item =get_object_or_404(menuItem, pk=pk)
+    category_id = menu_item.category.id
+    menu_item.delete()
+    messages.success(request, 'This menu item has been deleted sucessfully!')
+    return redirect('menuItem_by_category', category_id)
+
+
+
+# @login_required(login_url='login')
+# @user_passes_test(check_role_buss)
+# def delete_menu(request, pk=None):
+#     menu_item = get_object_or_404(menuItem, pk=pk)
+
+#     if request.method == 'POST':
+#         menu_item.delete()
+#         messages.success(request, 'Service has been deleted successfully!')
+#         return redirect('menuItem_by_category', menu_item.category.id)  # Redirect to the menu items list page of the category
+
+#     context = {
+#         'menu_item': menu_item,
+#     }
+
+#     return render(request, 'business/delete_menu.html', context)
+
+
+
+
+
 
 

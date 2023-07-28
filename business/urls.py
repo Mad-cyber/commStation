@@ -11,7 +11,12 @@ urlpatterns = [
     #create cat CRUD
     path('menu_builder/category/add/', views.add_category, name= 'add_category'),
     path('menu_builder/category/edit/<int:pk>', views.edit_category, name= 'edit_category'),
-    path('menu_builder/category/edelete/<int:pk>', views.delete_category, name= 'delete_category'),
+    path('menu_builder/category/delete/<int:pk>', views.delete_category, name= 'delete_category'),
+
+    #create menu item CRUD
+    path('menu_builder/menu/add/', views.add_menu, name= 'add_menu'),
+    path('menu_builder/menu/edit/<int:pk>', views.edit_menu, name= 'edit_menu'),
+    path('menu_builder/menu/delete/<int:pk>', views.delete_menu, name= 'delete_menu'),
 
 
 ]
