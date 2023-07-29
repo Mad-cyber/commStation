@@ -10,6 +10,7 @@ class Business(models.Model):
     user = models.OneToOneField(User, related_name='user', on_delete=models.CASCADE)
     user_profile = models.OneToOneField(userProfile, related_name='user_profile', on_delete=models.CASCADE)
     bus_name = models.CharField(max_length=100)
+    bus_slug = models.SlugField(max_length=100, unique=True)
     bus_address = models.CharField(max_length=200)
     bus_tax_cert = models.ImageField(upload_to='business/taxCert')
     is_approved = models.BooleanField(default=False)

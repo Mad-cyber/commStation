@@ -45,7 +45,7 @@
 
                                             <div class="post-title">
                                                 <h5>
-                                                    <a href="listing-detail.html"> {{ business.bus_name }}</a>
+                                                    <a href="{% url 'business_detail' business.bus_slug %}"> {{ business.bus_name }}</a>
 
                                                 </h5>
                                             </div>
@@ -56,7 +56,7 @@
                                         </div>
                                         <div class="list-option">
 
-                                            <a href="#" class="viewmenu-btn text-color">View Menu</a>
+                                            <a href="{% url 'business_detail' business.bus_slug %}" class="viewmenu-btn text-color">View Menu</a>
                                         </div>
                                     </li>
                                     {% endfor %}

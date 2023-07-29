@@ -15,6 +15,7 @@ from django.contrib.auth.tokens import default_token_generator
 
 from django.core.exceptions import PermissionDenied
 from business.models import Business
+from django.template.defaultfilters import slugify
 
 # Create your views here.
 
@@ -92,6 +93,8 @@ def registerBusiness(request):
             user.save()
             business = b_form.save(commit=False)
             business.user = user
+            bus_name = b_form.cleaned_data['bus_name']
+            business.bus_slug = slugify(bus_name)+'-'+str(user.id)
             user_profile = userProfile.objects.get(user=user)
             business.user_profile = user_profile 
             business.save()
