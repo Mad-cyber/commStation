@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, User
 from django.db.models.fields.related import OneToOneField
+from django.templatetags.static import static
+
 
 
 
@@ -108,6 +110,15 @@ class userProfile(models.Model):
     staff_code = models.CharField(max_length=20, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    
+    def get_cover_photo_url(self):
+        if self.cover_photo and hasattr(self.cover_photo, 'url'):
+            return self.cover_photo.url
+        
+    def get_profile_picture_url(self):
+        if self.profile_picture and self.profile_picture.name != '':
+            return self.profile_picture.url 
+        return None
 
     def __str__(self):
         return self.user.email

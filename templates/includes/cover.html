@@ -1,7 +1,8 @@
 {% load static %}
 <!-- {% debug %} https://docs.djangoproject.com/en/4.2/ref/logging/ -->
 <!-- come back to this the values are not passing from the models.py and views.py to the covner photo  -->
-<div class="page-section restaurant-detail-image-section" style="background: url({{business.user_profile.cover_photo.url}}) no-repeat center / cover; ">
+<div class="page-section restaurant-detail-image-section"
+    style="background: url({% if business.user_profile.get_cover_photo_url %}{{business.user_profile.get_cover_photo_url}}{% else %}{% static 'extra-images/cover-image.jpg' %}{% endif %}) no-repeat center / cover; ">
 
     <!-- Container Start -->
     <div class="container">
@@ -13,7 +14,12 @@
                     <div class="company-info">
                         <div class="img-holder">
                             <figure>
-                                <img src="{{ business.user_profile.profile_picture.url }}">
+                                {% if business.user_profile.get_profile_picture_url %}
+                                <img src="{{ business.user_profile.get_profile_picture_url }}">
+                                {% else %}
+                                <img src="{% static 'extra-images/default_profile_image.jpg' %}">
+                                {% endif %}
+
                             </figure>
                         </div>
 
@@ -21,8 +27,10 @@
                             <span class="restaurant-title">{{ business.bus_name }}
                             </span>
                             <div class="text">
+                                {% if business.user_profile.address %}
                                 <i class="icon-location"></i>
-                                <p>{{ business.bus_address }}</p>
+                                <p>{{ business.user_profile.address }}</p>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -34,4 +42,3 @@
     </div>
     <!-- Container End -->
 </div>
-

@@ -31,9 +31,16 @@
                                                                 <li class="gal-img">
                                                                     <div class="drag-list">
                                                                         <div class="item-thumb">
+                                                                            {% if profile.profile_picture %}
                                                                             <img class="thumbnail"
-                                                                                src="{{profile.profile_picture.url}}"
+                                                                                src="{{ profile.profile_picture.url }}"
                                                                                 alt="business-logo">
+                                                                            {% else %}
+                                                                            <img class="thumbnail"
+                                                                                src="{% static 'extra-images/default_profile_image.jpg' %}"
+                                                                                alt="Default Profile Picture">
+                                                                            {% endif %}
+
                                                                         </div>
                                                                     </div>
                                                                 </li>
@@ -43,9 +50,10 @@
                                                             <label>Update Business Profile Picture</label>
                                                             <div class="upload-gallery">
                                                                 {{profile_form.profile_picture}}
-                                                            </div> 
+                                                            </div>
                                                         </div>
-                                                        <label class="text-danger"> {{ profile_form.profile_picture.errors }} </label>
+                                                        <label class="text-danger"> {{
+                                                            profile_form.profile_picture.errors }} </label>
 
                                                     </div>
                                                 </div>
@@ -56,9 +64,16 @@
                                                                 <li class="gal-img">
                                                                     <div class="drag-list">
                                                                         <div class="item-thumb">
+                                                                            {% if profile.cover_photo %}
                                                                             <img class="thumbnail"
                                                                                 src="{{profile.cover_photo.url}}"
                                                                                 alt="cover-photo">
+                                                                            {% else %}
+                                                                            <img class="thumbnail"
+                                                                                src="{% static 'extra-images/cover-image.jpg' %}"
+                                                                                alt="cover-photo">
+                                                                            {% endif %}
+
                                                                         </div>
                                                                     </div>
                                                                 </li>
@@ -71,7 +86,8 @@
                                                             </div>
 
                                                         </div>
-                                                        <label class="text-danger"> {{ profile_form.cover_photo.errors }} </label>
+                                                        <label class="text-danger"> {{ profile_form.cover_photo.errors
+                                                            }} </label>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -95,8 +111,9 @@
                                                                 {{bus_form.bus_tax_cert}}
                                                             </div>
                                                         </div>
-                                                        <label class="text-danger"> {{ bus_form.bus_tax_cert.errors }} </label>
-                                                        
+                                                        <label class="text-danger"> {{ bus_form.bus_tax_cert.errors }}
+                                                        </label>
+
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -112,7 +129,7 @@
                                                         <small class="text-muted ">powered by Google</small>
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                     <div class="field-holder">
                                                         <label>city*</label>
@@ -145,9 +162,6 @@
                                 </div>
                             </form>
                             <!-- My Restaurants Form End -->
-
-
-
                         </div>
                     </div>
                 </div>

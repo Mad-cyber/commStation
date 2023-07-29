@@ -155,6 +155,8 @@ def add_menu(request):
         'form': form,
     }
     form = menuItemForm()
+    #modify category form so it shows for the business only
+    form.fields['category'].queryset = Category.objects.filter(business=get_business(request))
     context = {
         'form': form,
     }
@@ -179,6 +181,8 @@ def edit_menu(request, pk=None):
                 form.add_error(None, "A service with this slug already exists.")
     else:
         form = menuItemForm(instance=menu_item)
+        #modify category form so it shows for the business only
+    form.fields['category'].queryset = Category.objects.filter(business=get_business(request))
     context = {
         'form': form,
         'menu_item': menu_item,  
