@@ -76,7 +76,7 @@ def registerUser(request):
 def registerBusiness(request):
     if request.user.is_authenticated:
         messages.warning(request, 'You have already logged into your account')
-        return redirect('dashboard')
+        return redirect('myAccount')
     elif request.method =='POST':
         #store data and creare the business
         form = UserForm(request.POST)
