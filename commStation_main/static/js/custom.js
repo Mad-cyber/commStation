@@ -23,31 +23,7 @@ function onPlaceChanged() {
         console.log('place name=>', place.name)
     }
 
-
-
-
-
-
-    // console.log(place.address_components)
-    // for (var i=0; i<place.address_components.length; i++){
-    //     for(var j=0; j<place.address_components[i].types.length; j++){
-    //         //get the country
-    //         if (place.address_components[i].types[j] =='country'){
-    //             $('#id_country').val(place.address_components[i].long_name);
-    //         }
-    //     }
-
-    // }
 }
-// console.log(address)
-// geocoder.geocode({'address':address}, function(results,status){
-//     // console.log('results=>', results)
-//     // console.log('status=>', status)
-//     if (status == google.maps.GeocoderStatus.OK){
-
-//     }
-
-// })
 
 $(document).ready(function () {
     // add item to cart
@@ -71,16 +47,16 @@ $(document).ready(function () {
                     Swal.fire({
                         title: response.message,
                         text: '',
-                        icon: 'info'
+                        icon: 'warning'
                     }).then(function () {
                         window.location = '/accounts/login/';
 
                     })
-                }if(response.status == 'Failed'){
+                } if (response.status == 'Failed') {
                     Swal.fire({
                         title: response.message,
                         text: '',
-                        icon: 'Error'
+                        icon: 'error'
                     })
 
                 } else {
@@ -105,6 +81,7 @@ $(document).ready(function () {
 
         var menu_id = $(this).attr('data-id');
         var url = $(this).attr('data-url');
+        var cart_id = $(this).attr('id');
 
         $.ajax({
             type: 'GET',
@@ -115,12 +92,12 @@ $(document).ready(function () {
                     Swal.fire({
                         title: response.message,
                         text: '',
-                        icon: 'info'
+                        icon: 'warning'
                     }).then(function () {
                         window.location = '/accounts/login/';
 
                     })
-                }else if (response.status == 'Failed') {
+                } else if (response.status == 'Failed') {
                     Swal.fire({
                         title: response.message,
                         text: '',
@@ -130,11 +107,72 @@ $(document).ready(function () {
                     $('#cart_counter').html(response.cart_counter['cart_count']);
                     $('#qty-' + menu_id).html(response.qty);
 
+                    removeCartItem(response.qty, cart_id);
+                    checkEmptyCart();
+
                 }
 
             }
         })
     })
 
+    $(document).ready(function () {
+        //delete cart item from cart.html view
+        $('.delete_cart').on('click', function (e) {
+            e.preventDefault();
+    
+            var cart_id = $(this).attr('data-id');
+            var url = $(this).attr('data-url');
+    
+            $.ajax({
+                type: 'GET',
+                url: url,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function (response) {
+                    console.log(response);
+                    if (response.status == 'Failed') {
+                        Swal.fire({
+                            title: response.message,
+                            text: '',
+                            icon: 'error'
+                        });
+                    } else {
+                        $('#cart_counter').html(response.cart_counter['cart_count']);
+                        Swal.fire({
+                            title: response.status,
+                            text: response.message,
+                            icon: 'success'
+                        });
+                        removeCartItem(0, cart_id);
+                        checkEmptyCart();
 
+                    }
+                }
+            });
+        });
+    });
+    
+    //show instant deletion
+    function removeCartItem(cartItemQty, cart_id) {
+        if(window.location.pathname == '/cart/'){
+            if(cartItemQty <=0){
+                //remove the cart element
+                document.getElementById("cart-item-"+cart_id).remove()
+            } 
+
+        }
+          
+    }
+
+    //check if cart is empty
+    function checkEmptyCart(){
+        var cart_counter = document.getElementById('cart_counter').innerHTML
+        if(cart_counter == 0){
+            document.getElementById("empty-cart").style.display = "block";
+        }
+    }
+
+    
 });
