@@ -27,8 +27,10 @@
 	<script src="https://kit.fontawesome.com/c03014cf4f.js" crossorigin="anonymous"></script>
 
 	<!-- Script to load in HTML head Google Mpa platform---> 
+	<!-- remove HTML console error -->
+	{% if '/profile/' in request.GET %}
 	<script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_API_KEY }}&libraries=places&callback=initAutoComplete" async defer></script>
-
+	{% endif %}
 	<script src="{% static 'js/custom.js' %}"></script>
 
 
