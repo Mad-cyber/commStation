@@ -22,6 +22,12 @@ function onPlaceChanged (){
     else{
         console.log('place name=>', place.name)
     }
+
+
+
+
+
+
     // console.log(place.address_components)
     // for (var i=0; i<place.address_components.length; i++){
     //     for(var j=0; j<place.address_components[i].types.length; j++){
@@ -42,3 +48,25 @@ function onPlaceChanged (){
     //     }
 
     // })
+
+    $(document).ready(function () {
+        $('.add_to_cart').on('click', function (e) {
+            e.preventDefault();
+
+            var menu_id = $(this).attr('data-id');
+            var url = $(this).attr('data-url');
+
+            var data = {
+                menu_id: menu_id,
+            }
+
+            $.ajax({
+                type: 'GET',
+                url: url,
+                data: data,
+                success: function (response) {
+                    console.log(response)
+                }
+            })
+        })
+    });
