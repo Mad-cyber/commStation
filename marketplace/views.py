@@ -58,11 +58,11 @@ def add_to_cart(request, menu_id):
                     return JsonResponse({'status':'Success', 'message': 'Item added sucessfully to cart', 'cart_counter': get_cart_counter(request), 'qty': checkCart.quantity })
                 
             except:
-                return JsonResponse({'status':'Failed', 'message': 'this menu item does not exist'})
+                return JsonResponse({'status':'Failed', 'message': 'This item is not in your cart'})
 
-        return JsonResponse({'status':'Success', 'message': 'invalid request'})
+        return JsonResponse({'status':'Failed', 'message': 'invalid request'})
     else:
-        return JsonResponse({'status':'Failed', 'message': 'Please loging to continue'})
+        return JsonResponse({'status':'login_required', 'message': 'Please login to continue'})
     
 
 def remove_cart_item(request, menu_id):
@@ -86,11 +86,11 @@ def remove_cart_item(request, menu_id):
                     return JsonResponse({'status':'Failed', 'message': 'This item is not in your cart', 'qty': checkCart.quantity })
                 
             except:
-                return JsonResponse({'status':'Failure', 'message': 'this menu item does not exist'})
+                return JsonResponse({'status':'Failed', 'message': 'This item is not in your cart'})
 
         return JsonResponse({'status':'Success', 'message': 'invalid request'})
     else:
-        return JsonResponse({'status':'Failure', 'message': 'Please loging to continue'})
+        return JsonResponse({'status':'login_required', 'message': 'Please login to continue'})
     
     #return JsonResponse({'status':'Failed', 'message': 'Please loging to continue'})
 
