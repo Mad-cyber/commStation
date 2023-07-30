@@ -93,8 +93,14 @@ function onPlaceChanged (){
                 url: url,
                 success: function (response) {
                     console.log(response)
-                    // $('#cart_counter').html(response.cart_counter['cart_count']);
-                    // $('#qty-'+menu_id).html(response.qty);
+                    if(response.status == 'Failure'){
+                        console.log(response)
+                    }else{
+                        $('#cart_counter').html(response.cart_counter['cart_count']);
+                        $('#qty-'+menu_id).html(response.qty);
+
+                    }
+                    
                 }
             })
         })

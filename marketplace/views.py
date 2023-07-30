@@ -83,14 +83,14 @@ def remove_cart_item(request, menu_id):
                         checkCart.quantity = 0
                     return JsonResponse({'status':'Success', 'cart_counter': get_cart_counter(request), 'qty': checkCart.quantity})
                 except:
-                    return JsonResponse({'status':'Success', 'message': 'This item is not in your cart', 'qty': checkCart.quantity })
+                    return JsonResponse({'status':'Failed', 'message': 'This item is not in your cart', 'qty': checkCart.quantity })
                 
             except:
-                return JsonResponse({'status':'Failed', 'message': 'this menu item does not exist'})
+                return JsonResponse({'status':'Failure', 'message': 'this menu item does not exist'})
 
         return JsonResponse({'status':'Success', 'message': 'invalid request'})
     else:
-        return JsonResponse({'status':'Failed', 'message': 'Please loging to continue'})
+        return JsonResponse({'status':'Failure', 'message': 'Please loging to continue'})
     
     #return JsonResponse({'status':'Failed', 'message': 'Please loging to continue'})
 
