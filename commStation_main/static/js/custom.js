@@ -62,6 +62,13 @@ $(document).ready(function () {
                 } else {
                     $('#cart_counter').html(response.cart_counter['cart_count']);
                     $('#qty-' + menu_id).html(response.qty);
+
+                    //handle cart calculation and totals
+                    applyCartAmounts(
+                        response.cart_amount['subtotal'],
+                        response.cart_amount['service_fee'],
+                        response.cart_amount['grand_total']
+                    )
                 }
             }
         })
@@ -106,6 +113,13 @@ $(document).ready(function () {
                 } else {
                     $('#cart_counter').html(response.cart_counter['cart_count']);
                     $('#qty-' + menu_id).html(response.qty);
+
+                    applyCartAmounts(
+                        response.cart_amount['subtotal'],
+                        response.cart_amount['service_fee'],
+                        response.cart_amount['grand_total']
+                    )
+
                     if (window.location.pathname == '/cart/') {
                         removeCartItem(response.qty, cart_id);
                         checkEmptyCart();
@@ -148,6 +162,13 @@ $(document).ready(function () {
                             text: response.message,
                             icon: 'success'
                         });
+                        applyCartAmounts(
+                            response.cart_amount['subtotal'],
+                            response.cart_amount['service_fee'],
+                            response.cart_amount['grand_total']
+                        )
+
+
                         removeCartItem(0, cart_id);
                         checkEmptyCart();
 
@@ -175,6 +196,17 @@ $(document).ready(function () {
         if (cart_counter == 0) {
             document.getElementById("empty-cart").style.display = "block";
         }
+    }
+
+    //apply cart amounts
+    function applyCartAmounts(subtotal, service_fee, grand_total) {
+        if (window.location.pathname == '/cart/') {
+            $('#subtotal').html(subtotal)
+            $('#fee').html(service_fee)
+            $('#total').html(grand_total)
+        }
+
+
     }
 
 

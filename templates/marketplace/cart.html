@@ -60,7 +60,6 @@
                                             <div class="text-center p-5">
                                                 <h3>Cart is empty </h3>
 
-
                                             </div>
 
                                             {% endif %}
@@ -102,7 +101,7 @@
                                                 Subtotal
                                                 <span class="price float-right">
                                                     <span class="currency">€</span>
-                                                    <span id="subtotal">0</span>
+                                                    <span id="subtotal">{{ subtotal }}</span>
                                                 </span>
 
                                             </li>
@@ -110,14 +109,14 @@
                                                 Service fee
                                                 <span class="price float-right">
                                                     <span class="currency">€</span>
-                                                    <span id="fee">0</span>
+                                                    <span id="fee">{{ service_fee }}</span>
                                                 </span>
                                             </li>
                                             <li style="list-style-type: none; font-weight: 600;">
                                                 Total
                                                 <span class="price float-right">
                                                     <span class="currency">€</span>
-                                                    <span id="total">0</span>
+                                                    <span id="total">{{ grand_total }}</span>
                                                 </span>
 
                                             </li>
