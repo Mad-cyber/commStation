@@ -35,6 +35,7 @@
                                                     <div class="text-holder">
                                                         <h6 class="text-color">{{ items.menuitem }}</h6>
                                                         <span>{{ items.menuitem.description }}</span>
+                                                        <a href="{% url 'business_detail' items.menuitem.business.bus_slug %}" class="badge badge-pill badge-info">{{ items.menuitem.business }}</a>
                                                     </div>
                                                     <div class="price-holder">
                                                         <span class="price">{{ items.menuitem.price }}</span>
