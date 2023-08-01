@@ -5,8 +5,8 @@ from django.templatetags.static import static
 
 from django.contrib.gis.db import models as gismodels
 from django.contrib.gis.geos import Point
-from geopy.geocoders import Nominatim
-from django.contrib.gis.geos import fromstr
+# from geopy.geocoders import Nominatim
+# from django.contrib.gis.geos import fromstr
 
 
 
@@ -130,20 +130,13 @@ class userProfile(models.Model):
 
     def __str__(self):
         return self.user.email
+    #add the location map for the searhc function in the backend from geolocation api https://docs.djangoproject.com/en/4.2/ref/contrib/gis/db-api/
+    def save(self, *args, **kwargs):
+        if self.latitude and self.longitude:
+            self.location = Point(float(self.longitude), float(self.latitude))
+            return super(userProfile, self).save(*args, **kwargs)
+        return super(userProfile, self).save(*args, **kwargs)
     
-    # def save(self, *args, **kwargs):
-    #     if self.address:
-    #         geolocator = Nominatim(user_agent="geoapiExercises")
-    #         location = geolocator.geocode(self.address)
-    #         if location:
-    #             self.location = fromstr(f'POINT({location.longitude} {location.latitude})', srid=4326)
-    #     super(userProfile, self).save(*args, **kwargs)
-
-    
-    # def save(self, *args, **kwargs):
-    #     if self.address:
-    #         self.location = Point(float(self.address))
-    #         return super(userProfile, self).save(*args, **kwargs)
-    #     return super(userProfile, self).save(*args, **kwargs)
+  
 
 #post_save.connect(post_save_create_profile_receiver, sender=User) using singals https://docs.djangoproject.com/en/4.2/ref/signals/

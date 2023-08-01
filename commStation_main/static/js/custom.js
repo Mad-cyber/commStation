@@ -47,11 +47,16 @@ function onPlaceChanged() {
         }
     });
     //add address fields to form for bus dashboard
+    console.log(place.address_components);
     for(var i=0; i<place.address_components.length;i++){
         for(var j=0; j<place.address_components[i].types.length; j++){
             //get city
-            if(place.address_components[i].types[j] =='city'){
+            if(place.address_components[i].types[j] =='locality'){
                 $('#id_city').val(place.address_components[i].long_name);
+            }
+            //get post code
+            if(place.address_components[i].types[j] =='postal_code'){
+                $('#id_post_code').val(place.address_components[i].long_name);
             }
 
             //get country field
