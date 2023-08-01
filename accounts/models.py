@@ -3,6 +3,11 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, User
 from django.db.models.fields.related import OneToOneField
 from django.templatetags.static import static
 
+from django.contrib.gis.db import models as gismodels
+from django.contrib.gis.geos import Point
+from geopy.geocoders import Nominatim
+from django.contrib.gis.geos import fromstr
+
 
 
 
@@ -107,6 +112,9 @@ class userProfile(models.Model):
     city = models.CharField(max_length=50, blank=True, null=True)
     post_code = models.CharField(max_length=50, blank=True, null=True)
     country = models.CharField(max_length=20, blank=True, null=True)
+    latitude = models.CharField(max_length=20, blank=True, null=True)
+    longitude = models.CharField(max_length=20, blank=True, null=True)
+    location = gismodels.PointField(blank=True, null=True, srid=4326)
     staff_code = models.CharField(max_length=20, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
@@ -122,5 +130,20 @@ class userProfile(models.Model):
 
     def __str__(self):
         return self.user.email
+    
+    # def save(self, *args, **kwargs):
+    #     if self.address:
+    #         geolocator = Nominatim(user_agent="geoapiExercises")
+    #         location = geolocator.geocode(self.address)
+    #         if location:
+    #             self.location = fromstr(f'POINT({location.longitude} {location.latitude})', srid=4326)
+    #     super(userProfile, self).save(*args, **kwargs)
+
+    
+    # def save(self, *args, **kwargs):
+    #     if self.address:
+    #         self.location = Point(float(self.address))
+    #         return super(userProfile, self).save(*args, **kwargs)
+    #     return super(userProfile, self).save(*args, **kwargs)
 
 #post_save.connect(post_save_create_profile_receiver, sender=User) using singals https://docs.djangoproject.com/en/4.2/ref/signals/

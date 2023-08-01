@@ -1,5 +1,6 @@
 // worked from google docs https://www.youtube.com/watch?v=c3MjU9E9buQ
 let autocomplete;
+let geocoder; // Define the geocoder variable
 
 function initAutoComplete() {
     autocomplete = new google.maps.places.Autocomplete(
@@ -7,7 +8,7 @@ function initAutoComplete() {
         {
             types: ['geocode', 'establishment'],
             componentRestrictions: { 'country': ['irl'] },
-        })
+        });
     // function to specify what should happen when the prediction is clicked
     autocomplete.addListener('place_changed', onPlaceChanged);
 }
@@ -22,8 +23,48 @@ function onPlaceChanged() {
     else {
         console.log('place name=>', place.name)
     }
+    //get address and assign them to fields
+
+    // Check if the geocoder is defined
+    if (!geocoder) {
+        geocoder = new google.maps.Geocoder();
+    }
+
+    // Get the address from the place object
+    var address = place.formatted_address;
+
+    // Use the geocoder to get the latitude and longitude
+    geocoder.geocode({ 'address': address }, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+            var latitude = results[0].geometry.location.lat();
+            var longitude = results[0].geometry.location.lng();
+
+            // console.log('lat=>', latitude);
+            // console.log('lng=>', longitude);
+            $('#id_latitude').val(latitude);
+            $('#id_longitude').val(longitude);
+            $('#id_address').val(address);
+        }
+    });
+    //add address fields to form for bus dashboard
+    for(var i=0; i<place.address_components.length;i++){
+        for(var j=0; j<place.address_components[i].types.length; j++){
+            //get city
+            if(place.address_components[i].types[j] =='city'){
+                $('#id_city').val(place.address_components[i].long_name);
+            }
+
+            //get country field
+            if(place.address_components[i].types[j] =='country'){
+                $('#id_country').val(place.address_components[i].long_name);
+            }
+            
+        }
+    }
+
 
 }
+
 
 $(document).ready(function () {
     // add item to cart

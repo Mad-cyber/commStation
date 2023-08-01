@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from decouple import config
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'business',
     'menu',
     'marketplace',
+    'django.contrib.gis',
 ]
 
 MIDDLEWARE = [
@@ -85,7 +87,8 @@ WSGI_APPLICATION = 'commStation_main.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        # 'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': config('db_NAME'),
         'USER': config('db_USER') ,
         'PASSWORD': config('db_PASSWORD'),
@@ -168,6 +171,15 @@ EMAIL_USE_TLS = True
 #adding Google APi for maps
 
 GOOGLE_API_KEY = config('GOOGLE_API_KEY')
+
+os.environ['PATH'] = os.path.join(BASE_DIR, 'env\Lib\site-packages\osgeo') + ';' + os.environ['PATH']
+os.environ['PROJ_LIB'] = os.path.join(BASE_DIR, 'env\Lib\site-packages\osgeo\data\proj') + ';' + os.environ['PATH']
+GDAL_LIBRARY_PATH = os.path.join(BASE_DIR, 'env\Lib\site-packages\osgeo\gdal304.dll')
+
+# os.environ['PATH'] = os.path.join(BASE_DIR, 'venvLibsite-packagesosgeo') + ';' + os.environ['PATH']
+# os.environ['PROJ_LIB'] = os.path.join(BASE_DIR, 'venvLibsite-packagesosgeodataproj') + ';' + os.environ['PATH']
+# GDAL_LIBRARY_PATH = os.path.join(BASE_DIR, 'venvLibsite-packagesosgeogdal303.dll')
+
 
 # #checking errors
 # LOGGING = {

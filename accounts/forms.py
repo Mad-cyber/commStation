@@ -26,5 +26,5 @@ class UserProfileForm(forms.ModelForm):
     cover_photo = forms.FileField(widget=forms.FileInput(attrs={'class': 'btn.btn-info'}), validators=[allow_only_images_validation])
     class Meta:
         model = userProfile
-        fields = ['profile_picture', 'cover_photo', 'address', 'city', 'post_code', 'country']
+        fields = ['profile_picture', 'cover_photo', 'address', 'city', 'post_code', 'country','latitude','longitude']
         
