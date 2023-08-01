@@ -83,9 +83,11 @@ def add_category(request):
             category_name = form.cleaned_data['category_name']
             category = form.save(commit=False)
             category.business = get_business(request)
-            category.slug = slugify(category_name)
+            
             try:
-                form.save()
+                category.save()
+                category.slug = slugify(category_name)+'-'+str(category.id)#pizaa-10
+                category.save()
                 messages.success(request, 'New Category has been created sucessfully!')
                 return redirect('menu_builder')
             except IntegrityError:

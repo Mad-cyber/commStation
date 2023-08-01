@@ -6,6 +6,7 @@ from django.db.models import Prefetch
 from .models import Cart
 from .context_processors import get_cart_counter, get_cart_amounts
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 
 # Create your views here.
 def marketplace(request):
@@ -119,6 +120,22 @@ def delete_cart(request, cart_id):
             return JsonResponse({'status':'Failed', 'message': 'invalid request'})
 
 
+def search(request):
+    address = request.GET['address']
+    radius = request.GET['radius']
+    search_word = request.GET['search_word']
+
+    # get the menu items ids for searching
+    get_bus_by_service_item = menuItem.objects.filter(menu_title__icontains=search_word, is_available=True).values_list('business',flat=True)
+    businesses = Business.objects.filter(Q(id__in=get_bus_by_service_item) | Q(bus_name__icontains=search_word, is_approved=True, user__is_active=True))
+    business_count = businesses.count()
+
+    context = {
+        'businesses':businesses,
+        'business_count':business_count,
+    }
+
+    return render(request, 'marketplace/listings.html', context)
 
 
 
