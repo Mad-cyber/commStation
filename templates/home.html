@@ -88,8 +88,9 @@
 				<div class="row">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<div class="element-title align-left">
-							<h2>Top Restaurants</h2>
-							<p>Explore restaurants, bars, and cafés by locality</p>
+							<h2>Top Services</h2>
+							<p>Explore local businesses and services. Support Local!</p>
+							
 						</div>
 					</div>
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style ="padding-right: 0 !important; padding-right: 0 !important";>
@@ -99,10 +100,10 @@
 								<li class="has-border">
 									<figure>
 										{% if business.user_profile.profile_picture %}
-										<a href="#"><img src="{{ business.user_profile.profile_picture.url }}"
+										<a href="{% url 'business_detail' business.bus_slug %}"><img src="{{ business.user_profile.profile_picture.url }}"
 												class="attachment-full size-full wp-post-image" alt=""></a>
 										{% else %}
-										<a href="#"><img src="{% static 'extra-images/default_profile_image.jpg' %}"
+										<a href="{% url 'business_detail' business.bus_slug %}"><img src="{% static 'extra-images/default_profile_image.jpg' %}"
 											class="attachment-full size-full wp-post-image" alt=""></a>
 
 										{% endif %}
@@ -139,7 +140,7 @@
 										<div class="img-holder">
 											<figure>
 
-												<a href="#">
+												<a href="{% url 'business_detail' business.bus_slug %}">
 													{% if business.user_profile.profile_picture %}
 													<img src="{{ business.user_profile.profile_picture.url }}"
 														class="img-thumb wp-post-image" alt="">
@@ -166,6 +167,12 @@
 											{% if business.user_profile.city and business.user_profile.country and business.user_profile.post_code %}
 											<span>{{ business.user_profile.city }}, {{ business.user_profile.country }}, {{ business.user_profile.post_code }}</span>
 											{% endif %}
+
+											{% if business.kms %}
+											<br>
+											<span><small><b>{{ business.kms }} km</b>away </small></span>
+											{% endif %}
+
 										</div>
 
 									</div>

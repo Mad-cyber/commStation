@@ -64,6 +64,10 @@
 <!-- https://www.w3schools.com/html/html5_geolocation.asp -->
 <script>
     var x = document.getElementById("location");
+    var current_location = sessionStorage.getItem("current_location")
+    if(current_location !=""){
+        x.value = current_location;
+    }
 
     function getLocation() {
         if (navigator.geolocation) {
@@ -85,8 +89,10 @@
             url: url,
             type: "GET",
             success: function (response) {
-                var location = response.results[0].formatted_address;
-                x.value = location;
+                var current_location = response.results[0].formatted_address;
+                x.value = current_location
+                sessionStorage.setItem("current_location", current_location)
+                window.location = '?lat='+lat+'&lng='+lng
             }
         });
     }
