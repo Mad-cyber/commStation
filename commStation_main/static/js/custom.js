@@ -34,7 +34,7 @@ function onPlaceChanged() {
     var address = place.formatted_address;
 
     // Use the geocoder to get the latitude and longitude
-    geocoder.geocode({ 'address': address }, function(results, status) {
+    geocoder.geocode({ 'address': address }, function (results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
             var latitude = results[0].geometry.location.lat();
             var longitude = results[0].geometry.location.lng();
@@ -48,22 +48,22 @@ function onPlaceChanged() {
     });
     //add address fields to form for bus dashboard
     console.log(place.address_components);
-    for(var i=0; i<place.address_components.length;i++){
-        for(var j=0; j<place.address_components[i].types.length; j++){
+    for (var i = 0; i < place.address_components.length; i++) {
+        for (var j = 0; j < place.address_components[i].types.length; j++) {
             //get city
-            if(place.address_components[i].types[j] =='locality'){
+            if (place.address_components[i].types[j] == 'locality') {
                 $('#id_city').val(place.address_components[i].long_name);
             }
             //get post code
-            if(place.address_components[i].types[j] =='postal_code'){
+            if (place.address_components[i].types[j] == 'postal_code') {
                 $('#id_post_code').val(place.address_components[i].long_name);
             }
 
             //get country field
-            if(place.address_components[i].types[j] =='country'){
+            if (place.address_components[i].types[j] == 'country') {
                 $('#id_country').val(place.address_components[i].long_name);
             }
-            
+
         }
     }
 
@@ -254,55 +254,56 @@ $(document).ready(function () {
 
 
     }
-
-    $('.add_hour').on('click',function(e){
+    //add the opening hours to the business dashboard
+    $('.add_hour').on('click', function (e) {
         e.preventDefault();
-    //alert('test');
+        //alert('test');
         var day = document.getElementById('id_day').value;
         var from_hour = document.getElementById('id_from_hour').value;
         var to_hour = document.getElementById('id_to_hour').value;
         var is_closed = document.getElementById('id_is_closed').checked;
         var csrf_token = $('input[name=csrfmiddlewaretoken]').val();
         var url = document.getElementById('add_hour_url').value;
-    
-        console.log(day,from_hour,to_hour,is_closed,csrf_token);
-    
+
+        console.log(day, from_hour, to_hour, is_closed, csrf_token);
+
         var condition = false;
-    
-        if(is_closed){
+
+        if (is_closed) {
             is_closed = 'True';
-            if(day !== ''){
+            if (day !== '') {
                 condition = true;
             }
         } else {
             is_closed = 'False';
-            if(day !== '' && from_hour !== '' && to_hour !== ''){
+            if (day !== '' && from_hour !== '' && to_hour !== '') {
                 condition = true;
             }
         }
-    
-        if(eval(condition)){
+
+        if (eval(condition)) {
             $.ajax({
-                type:'POST',
+                type: 'POST',
                 url: url,
                 data: {
                     'day': day,
-                    'from_hour':from_hour,
+                    'from_hour': from_hour,
                     'to_hour': to_hour,
                     'is_closed': is_closed,
                     'csrfmiddlewaretoken': csrf_token,
                 },
-                success: function(response){
-                    if(response.status == 'success'){
-                        if(response.is_closed == 'Closed'){
-                            html = html = '<tr><td><b>'+response.day+'</b></td><td>Closed</td><td><a href="#">Remove</a></td></tr>';
-                        }else{
-                            html = '<tr><td><b>'+response.day+'</b></td><td>'+response.from_hour+'-'+response.to_hour+' </td><td><a href="#">Remove</a></td></tr>';
+                success: function (response) {
+                    if (response.status == 'success') {
+                        if (response.is_closed == 'Closed') {
+                            html = html = '<tr id="hour-' + response.id + '"><td><b>' + response.day + '</b></td><td>Closed</td><td><a href="#" class="remove_hour" data-url="accounts/business/openhours/' + response.id + '/">Remove</a></td></tr>';
+                        } else {
+                            html = '<tr><td><b>' + response.day + '</b></td><td>' + response.from_hour + '-' + response.to_hour + ' </td><td><a href="#" class="remove_hour" data-url="accounts/business/openhours/' + response.id + '/">Remove</a></td></tr>';
                         }
 
                         $(".table-openhours").append(html)
                         document.getElementById("open_hours").reset();
-                    }else{
+                    } else {
+                        console.log(response.error)
                         Swal.fire({
                             title: response.message,
                             text: 'error',
@@ -311,11 +312,9 @@ $(document).ready(function () {
                         });
 
                     }
-                    //console.log(response)
                 }
             })
 
-            // console.log('add entry');
         } else {
             Swal.fire({
                 title: 'Please fill all fields',
@@ -324,9 +323,26 @@ $(document).ready(function () {
                 confirmButtonText: 'OK'
             });
         }
+    });
+
+    //remove the opening hour
+    $(document).on('click', '.remove_hour', function (e) {
+        e.preventDefault();
+        url = $(this).attr('data-url');
+
+        $.ajax({
+            type: 'GET',
+            url: url,
+            success: function (response) {
+                if (response.status == 'success') {
+                    document.getElementById('hour-' + response.id).remove()
+                }
+            }
+
+        })
+
     })
-    
-    
 
 
+    //end of document
 });

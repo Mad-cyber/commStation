@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import BussForm, OpenHoursForm
 from accounts.forms import UserProfileForm
+from django.db import IntegrityError
 
 from accounts.models import userProfile
 from .models import Business, OpenHours
@@ -236,11 +237,21 @@ def add_open_hours(request):
                 
                 return JsonResponse(response) 
             except IntegrityError as e:
-                response = {'status': 'failed'}
+                response = {'status': 'failed', 'message': from_hour+'-'+to_hour+' is active for this day. Please add a different day for your schedule.', 'error': str(e)}
                 return JsonResponse(response)                                  
             
         else:
             HTTPResponse('invalid request')
+
+def remove_open_hours(request, pk=None):
+    if request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            hour = get_object_or_404(OpenHours, pk=pk,)
+            hour.delete()
+            return JsonResponse({'status':'success','id':pk})
+
+
+ 
 
 
 

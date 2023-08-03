@@ -28,12 +28,12 @@
                             <table class="table-openhours" style="width: 500px; border: none !important">
                                 <tbody>
                                     {% for hour in open_hours %}
-                                    <tr>
+                                    <tr id ="hour-{{hour.id}}">
                                         <td>
                                             <b>{{ hour }}</b>
                                         </td>
                                         <td>{% if hour.is_closed %}Closed{% else %}{{ hour.from_hour }} - {{hour.to_hour }}{% endif %} </td>
-                                        <td><a href="#">Remove</a></td>
+                                        <td><a href="#" class ="remove_hour" data-url="{% url 'remove_open_hours' hour.id %}">Remove</a></td>
                                     </tr>
 
                                     {% endfor %}

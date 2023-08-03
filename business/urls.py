@@ -21,6 +21,8 @@ urlpatterns = [
     #path for the opening hours page
     path('openhours/', views.open_hours, name= 'open_hours'),
     path('openhours/add/', views.add_open_hours, name ='add_open_hours'),
+    path('openhours/remove/<int:pk>/', views.remove_open_hours, name ='remove_open_hours'),
+
 
 
 ]
