@@ -255,5 +255,78 @@ $(document).ready(function () {
 
     }
 
+    $('.add_hour').on('click',function(e){
+        e.preventDefault();
+    //alert('test');
+        var day = document.getElementById('id_day').value;
+        var from_hour = document.getElementById('id_from_hour').value;
+        var to_hour = document.getElementById('id_to_hour').value;
+        var is_closed = document.getElementById('id_is_closed').checked;
+        var csrf_token = $('input[name=csrfmiddlewaretoken]').val();
+        var url = document.getElementById('add_hour_url').value;
+    
+        console.log(day,from_hour,to_hour,is_closed,csrf_token);
+    
+        var condition = false;
+    
+        if(is_closed){
+            is_closed = 'True';
+            if(day !== ''){
+                condition = true;
+            }
+        } else {
+            is_closed = 'False';
+            if(day !== '' && from_hour !== '' && to_hour !== ''){
+                condition = true;
+            }
+        }
+    
+        if(eval(condition)){
+            $.ajax({
+                type:'POST',
+                url: url,
+                data: {
+                    'day': day,
+                    'from_hour':from_hour,
+                    'to_hour': to_hour,
+                    'is_closed': is_closed,
+                    'csrfmiddlewaretoken': csrf_token,
+                },
+                success: function(response){
+                    if(response.status == 'success'){
+                        if(response.is_closed == 'Closed'){
+                            html = html = '<tr><td><b>'+response.day+'</b></td><td>Closed</td><td><a href="#">Remove</a></td></tr>';
+                        }else{
+                            html = '<tr><td><b>'+response.day+'</b></td><td>'+response.from_hour+'-'+response.to_hour+' </td><td><a href="#">Remove</a></td></tr>';
+                        }
+
+                        $(".table-openhours").append(html)
+                        document.getElementById("open_hours").reset();
+                    }else{
+                        Swal.fire({
+                            title: response.message,
+                            text: 'error',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+
+                    }
+                    //console.log(response)
+                }
+            })
+
+            // console.log('add entry');
+        } else {
+            Swal.fire({
+                title: 'Please fill all fields',
+                text: '',
+                icon: 'info',
+                confirmButtonText: 'OK'
+            });
+        }
+    })
+    
+    
+
 
 });

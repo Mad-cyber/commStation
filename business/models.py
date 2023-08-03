@@ -65,11 +65,14 @@ class OpenHours(models.Model):
      day = models.IntegerField(choices= DAYS)
      from_hour = models.CharField(choices=HOUR_24, max_length=10, blank=True)
      to_hour = models.CharField(choices=HOUR_24, max_length=10, blank=True)
-     is_cloased = models.BooleanField(default=False)
+     is_closed = models.BooleanField(default=False)
 
      class Meta:
           ordering = ('day', 'from_hour')
           unique_together = ('day', 'from_hour', 'to_hour')
+
+     def __str__(self):
+        return self.get_day_display()
           
 
 

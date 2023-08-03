@@ -28,8 +28,9 @@
 
 	<!-- Script to load in HTML head Google Mpa platform---> 
 	<!-- remove HTML console error -->
-	
+	{% if '/' == request.path or 'profile' in request.path %}
 	<script src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_API_KEY }}&libraries=places&callback=initAutoComplete" defer></script>
+	{% endif %}
 	
 	<!-- install sweetalert -->
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

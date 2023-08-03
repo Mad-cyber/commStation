@@ -1,9 +1,11 @@
+from http.client import HTTPResponse
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import BussForm
+from .forms import BussForm, OpenHoursForm
 from accounts.forms import UserProfileForm
 
 from accounts.models import userProfile
-from .models import Business
+from .models import Business, OpenHours
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from accounts.views import check_role_buss
@@ -203,22 +205,42 @@ def delete_menu(request,pk=None):
     return redirect('menuItem_by_category', category_id)
 
 
+def open_hours(request):
+    open_hours = OpenHours.objects.filter(business=get_business(request))
+    form = OpenHoursForm()
+    context = {
+        'form': form,
+        'open_hours': open_hours,
+    }
 
-# @login_required(login_url='login')
-# @user_passes_test(check_role_buss)
-# def delete_menu(request, pk=None):
-#     menu_item = get_object_or_404(menuItem, pk=pk)
+    return render (request, 'business/open_hours.html', context)
 
-#     if request.method == 'POST':
-#         menu_item.delete()
-#         messages.success(request, 'Service has been deleted successfully!')
-#         return redirect('menuItem_by_category', menu_item.category.id)  # Redirect to the menu items list page of the category
+def add_open_hours(request):
+    #handle the request for the open hours function in custom.js and save in db
+    if request.user.is_authenticated:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.method == 'POST':
+            day = request.POST.get('day')
+            from_hour = request.POST.get('from_hour')
+            to_hour = request.POST.get('to_hour')
+            is_closed = request.POST.get('is_closed')
+            # print(day, from_hour, to_hour, is_closed)
 
-#     context = {
-#         'menu_item': menu_item,
-#     }
-
-#     return render(request, 'business/delete_menu.html', context)
+            try:
+                hour = OpenHours.objects.create(business=get_business(request), day=day, from_hour=from_hour, to_hour=to_hour, is_closed=is_closed)
+                if hour:
+                    day = OpenHours.objects.get(id=hour.id)
+                    if day.is_closed:
+                        response = {'status': 'success', 'id':hour.id, 'day': day.get_day_display(), 'is_closed': 'Closed'}
+                    else:
+                        response = {'status': 'success', 'id':hour.id, 'day': day.get_day_display(), 'from_hour': hour.from_hour, 'to_hour': hour.to_hour}
+                
+                return JsonResponse(response) 
+            except IntegrityError as e:
+                response = {'status': 'failed'}
+                return JsonResponse(response)                                  
+            
+        else:
+            HTTPResponse('invalid request')
 
 
 
