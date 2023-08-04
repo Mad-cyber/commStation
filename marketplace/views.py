@@ -1,6 +1,6 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from business.models import Business
+from business.models import Business, OpenHours
 from menu.models import Category, menuItem
 from django.db.models import Prefetch
 from .models import Cart
@@ -11,6 +11,7 @@ from django.db.models import Q
 from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.gis.measure import D
 from django.contrib.gis.db.models.functions import Distance
+from datetime import date
 
 
 
@@ -36,6 +37,15 @@ def business_detail(request, bus_slug):
         )
     )
 
+    open_hours = OpenHours.objects.filter(business=business).order_by('day', '-from_hour', '-to_hour')
+
+    #check the days open hours
+    today_date = date.today()
+    today = today_date.isoweekday()
+    #print(today_date)
+    current_opening_hours = OpenHours.objects.filter(business=business, day=today)
+    print(current_opening_hours )
+
     if request.user.is_authenticated:
         cart_items = Cart.objects.filter(user=request.user)
     else:
@@ -45,6 +55,8 @@ def business_detail(request, bus_slug):
         'business':business,
         'categories': categories,
         'cart_items':cart_items,
+        'open_hours': open_hours,
+        'current_opening_hours':current_opening_hours,
     }
     return render(request, 'marketplace/business_detail.html', context)
 
