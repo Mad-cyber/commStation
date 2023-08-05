@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
+
 {% block content %}
 <!-- Main Section Start -->
 <div class="main-section pt-5">
@@ -105,13 +106,18 @@
                                                 </span>
 
                                             </li>
-                                            <li style="list-style-type: none;">
-                                                Service fee
-                                                <span class="price float-right">
-                                                    <span class="currency">€</span>
-                                                    <span id="fee">{{ service_fee }}</span>
-                                                </span>
-                                            </li>
+                                            {% for key, value in tax_dict.items %}
+                                                {% for i, j in value.items %}
+                                                    <li style="list-style-type: none;">
+                                                        {{ key }} <small>({{ i }}%)</small>
+                                                        <span class="price float-right">
+                                                            <span class="currency">€</span>
+                                                            <span id="fee-{{ key }}">{{ j }}</span>
+
+                                                        </span>
+                                                    </li>
+                                                {% endfor %}
+                                            {% endfor %}
                                             <li style="list-style-type: none; font-weight: 600;">
                                                 Total
                                                 <span class="price float-right">

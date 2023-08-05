@@ -43,18 +43,6 @@ def business_detail(request, bus_slug):
     today = today_date.isoweekday()  
     current_opening_hours = OpenHours.objects.filter(business=business, day=today)
 
-    # now = datetime.now().time()
-    # current_time = now.replace(second=0, microsecond=0)
-
-    # is_open = False  # Assume the business is closed until proven otherwise
-    # for i in current_opening_hours:
-    #     if i.from_hour and i.to_hour:  # Ensure both from_hour and to_hour are not empty
-    #         start = datetime.strptime(i.from_hour, "%I:%M %p").time()  # use 12-hour format with AM/PM
-    #         end = datetime.strptime(i.to_hour, "%I:%M %p").time()  # use 12-hour format with AM/PM
-    #         if start <= current_time < end:
-    #             is_open = True
-    #             break  # Exit the loop, because we found a time slot when the business is open
-
     if request.user.is_authenticated:
         cart_items = Cart.objects.filter(user=request.user)
     else:
@@ -66,7 +54,6 @@ def business_detail(request, bus_slug):
         'cart_items': cart_items,
         'open_hours': open_hours,
         'current_opening_hours': current_opening_hours,
-        # 'is_open': is_open,
     }
     return render(request, 'marketplace/business_detail.html', context)
 
@@ -90,7 +77,7 @@ def add_to_cart(request, menu_id):
             except:
                 return JsonResponse({'status':'Failed', 'message': 'This item is not in your cart'})
 
-        return JsonResponse({'status':'Failed', 'message': 'invalid request'})
+        return JsonResponse({'status':'Failed', 'message': 'Invalid Request'})
     else:
         return JsonResponse({'status':'login_required', 'message': 'Please login to continue'})
     

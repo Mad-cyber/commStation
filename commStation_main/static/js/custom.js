@@ -112,7 +112,7 @@ $(document).ready(function () {
                     //handle cart calculation and totals
                     applyCartAmounts(
                         response.cart_amount['subtotal'],
-                        response.cart_amount['service_fee'],
+                        response.cart_amount['tax_dict'],
                         response.cart_amount['grand_total']
                     )
                 }
@@ -162,7 +162,7 @@ $(document).ready(function () {
 
                     applyCartAmounts(
                         response.cart_amount['subtotal'],
-                        response.cart_amount['service_fee'],
+                        response.cart_amount['tax_dict'],
                         response.cart_amount['grand_total']
                     )
 
@@ -210,7 +210,7 @@ $(document).ready(function () {
                         });
                         applyCartAmounts(
                             response.cart_amount['subtotal'],
-                            response.cart_amount['service_fee'],
+                            response.cart_amount['tax-dict'],
                             response.cart_amount['grand_total']
                         )
 
@@ -245,11 +245,22 @@ $(document).ready(function () {
     }
 
     //apply cart amounts
-    function applyCartAmounts(subtotal, service_fee, grand_total) {
+    function applyCartAmounts(subtotal, tax_dict, grand_total) {
         if (window.location.pathname == '/cart/') {
             $('#subtotal').html(subtotal)
-            $('#fee').html(service_fee)
             $('#total').html(grand_total)
+
+            for(key1 in tax_dict){
+                for(key2 in tax_dict[key1]){
+                    console.log(tax_dict[key1][key2])
+                    $('#fee-' + key1).html(tax_dict[key1][key2])
+                    console.log('Key1:', key1);
+                    console.log('Selector:','#fee-' + key1);
+                    console.log('Value:', tax_dict[key1][key2]);
+
+                }
+
+            }
         }
 
 
