@@ -25,7 +25,7 @@
                                 </figure>
                             </div>
                             <div class="text-holder">
-                                <span class="restaurant-title">{{ business.bus_name }}</span>
+                                <span class="restaurant-title">{{ business.bus_name }} {% if not business.is_open %} [Closed] {% endif %}</span>
                                 <div class="text">
                                     {% if business.user_profile.address %}
                                     <i class="icon-location"></i>

@@ -2,7 +2,7 @@ from django.db import models
 from accounts.models import User, userProfile
 from accounts.utils import send_notification
 import logging
-from datetime import time
+from datetime import time, date, datetime
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +24,25 @@ class Business(models.Model):
 
     def __str__(self):
         return self.bus_name
+    
+    def is_open(self):
+        today_date = date.today()
+        today = today_date.isoweekday() 
+
+        current_opening_hours = OpenHours.objects.filter(business=self, day=today)
+        now = datetime.now().time()
+        current_time = now.replace(second=0, microsecond=0)
+
+        is_open = False  # Assume the business is closed until proven otherwise
+        for i in current_opening_hours:
+            if i.from_hour and i.to_hour:  # Ensure both from_hour and to_hour are not empty
+                start = datetime.strptime(i.from_hour, "%I:%M %p").time()  # use 12-hour format with AM/PM
+                end = datetime.strptime(i.to_hour, "%I:%M %p").time()  # use 12-hour format with AM/PM
+                if start <= current_time < end:
+                    is_open = True
+                    break  # Exit the loop, because we found a time slot when the business is open
+        return is_open
+    
 
 def save(self, *args, **kwargs):
         logger.info("Saving Business object...")

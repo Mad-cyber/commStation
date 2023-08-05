@@ -11,7 +11,7 @@ from django.db.models import Q
 from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.gis.measure import D
 from django.contrib.gis.db.models.functions import Distance
-from datetime import date
+from datetime import date, datetime
 
 
 
@@ -39,12 +39,21 @@ def business_detail(request, bus_slug):
 
     open_hours = OpenHours.objects.filter(business=business).order_by('day', '-from_hour', '-to_hour')
 
-    #check the days open hours
     today_date = date.today()
-    today = today_date.isoweekday()
-    #print(today_date)
+    today = today_date.isoweekday()  
     current_opening_hours = OpenHours.objects.filter(business=business, day=today)
-    print(current_opening_hours )
+
+    # now = datetime.now().time()
+    # current_time = now.replace(second=0, microsecond=0)
+
+    # is_open = False  # Assume the business is closed until proven otherwise
+    # for i in current_opening_hours:
+    #     if i.from_hour and i.to_hour:  # Ensure both from_hour and to_hour are not empty
+    #         start = datetime.strptime(i.from_hour, "%I:%M %p").time()  # use 12-hour format with AM/PM
+    #         end = datetime.strptime(i.to_hour, "%I:%M %p").time()  # use 12-hour format with AM/PM
+    #         if start <= current_time < end:
+    #             is_open = True
+    #             break  # Exit the loop, because we found a time slot when the business is open
 
     if request.user.is_authenticated:
         cart_items = Cart.objects.filter(user=request.user)
@@ -52,11 +61,12 @@ def business_detail(request, bus_slug):
         cart_items = None
 
     context = {
-        'business':business,
+        'business': business,
         'categories': categories,
-        'cart_items':cart_items,
+        'cart_items': cart_items,
         'open_hours': open_hours,
-        'current_opening_hours':current_opening_hours,
+        'current_opening_hours': current_opening_hours,
+        # 'is_open': is_open,
     }
     return render(request, 'marketplace/business_detail.html', context)
 
