@@ -1,5 +1,5 @@
 {% load static %}
-<div class="page-section restaurant-detail-image-section" style="background: url({% static 'extra-images/wrench-img.jpg' %}) no-repeat center / cover; ">
+<div class="page-section restaurant-detail-image-section" style="background: url({% if user_profile.cover_photo %}{{ user_profile.get_cover_photo_url }}{% else %}{% static 'extra-images/cover-image.jpg' %}{% endif %}) no-repeat center / cover; ">
 
     <!-- Container Start -->
     <div class="container">
@@ -11,15 +11,20 @@
                     <div class="company-info">
                         <div class="img-holder">
                             <figure>
-                                <img src="{% static 'extra-images/kerrie-logo.png' %}" alt="takeaway-img">
+                                {% if user_profile.profile_picture %}
+                                <img src="{{ user_profile.profile_picture.url }}" alt="profile picture">
+
+                                {% else %}
+                                <img src="{% static 'extra-images/kerrie-logo.png' %}" alt="profile picture.img">
+                                {% endif %}
                             </figure>
                         </div>
 
                         <div class="text-holder">
-                            <span class="restaurant-title">Mary Ryan (Customer)</span>
+                            <span class="restaurant-title">{{ user.first_name }} {{ user.last_name }}</span>
                             <div class="text">
                                 <i class="icon-location"></i>
-                                <p>Phone Number: 123456789</p>
+                                <p>{{ user.phone_Number }}</p>
                             </div>
                         </div>
                     </div>
