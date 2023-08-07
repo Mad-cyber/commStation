@@ -46,7 +46,7 @@
                                                             style="margin-right: 28px;"><i
                                                                 class="icon-minus text-color"></i></a>
 
-                                                        <label for="" id="qty-{{items.menuitem.id}}">0</label>
+                                                        <label for="" id="qty-{{ items.menuitem.id }}">0</label>
                                                         <a href="#" class="add_to_cart" data-id="{{ items.menuitem.id }}"
                                                             data-url="{% url 'add_to_cart' items.menuitem.id %}"><i
                                                                 class="icon-plus4 text-color"></i></a>
@@ -126,6 +126,8 @@
                                                 </span>
 
                                             </li>
+
+                                            <a href="{% url 'checkout' %}" class ="btn btn-danger w-100 p-2 mt-3"> Proceed to Checkout</a>
                                         </ul>
                                     </div>
 
