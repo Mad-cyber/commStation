@@ -40,10 +40,3 @@ def get_cart_amounts(request):
 
     return dict(subtotal=subtotal,service_fee=service_fee, grand_total=grand_total, tax_dict=tax_dict)
 
-   #print(tax_dict)
-    # print('service fee==>', service_fee)
-
-        # service_fee = 0
-        # for key in tax_dict.values():
-        #     for x in key.values():
-

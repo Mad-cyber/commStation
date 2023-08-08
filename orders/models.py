@@ -40,7 +40,7 @@ class Order(models.Model):
     total = models.FloatField()
     tax_data = models.JSONField(blank=True, help_text= "Data format: {'service_type':{'service_percentage':'tax_amount'}}")
     total_tax = models.FloatField()
-    payment_method = models.BooleanField(default=False)
+    payment_method = models.CharField(max_length=20)
     status = models.CharField(max_length=20, choices=STATUS, default='New')
     is_ordered = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

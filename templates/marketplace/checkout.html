@@ -23,7 +23,7 @@
                                 <div class="menu-itam-holder">
 
                                     <div id="menu-item-list-6272" class="menu-itam-list">
-                                        <form action="#" method ="POST">
+                                        <form action="{% url 'place_order' %}" method ="POST">
                                             {% csrf_token %}
                                             <div class="row">
                                                 <div class="row">
@@ -88,7 +88,6 @@
                                     <div id="menu-item-list-6272" class="menu-itam-list">
 
                                         <ul>
-                                            {% if cart_items %}
                                                 {% for items in cart_items %}
                                                 <li id="cart-item-{{items.id}}">
                                                     <div class="image-holder"><img src="{{ items.menuitem.image.url }}"
@@ -108,13 +107,7 @@
                                                     </div>
                                                 </li>
                                                 {% endfor %}
-                                            {% else %}
-                                            <div class="text-center p-5">
-                                                <h3>Cart is empty </h3>
-
-                                            </div>
-
-                                            {% endif %}
+                                            
                                         </ul>
 
 
@@ -151,8 +144,26 @@
                                                 </span>
 
                                             </li>
+                                            <!-- Select Payment method  -->
+                                            <h5>SELECT PAYMENT METHOD</h5>
+                                            <div class="payment-method">
+                                                <label>
+                                                    <input type="radio" name="payment_method" value="PayPal" style="padding: 5px;">
+                                                    <img src="{% static 'images/PayPal.png' %}" alt="PayPal" width="100">
+                                                </label>
+                                                &emsp;
+                                                <label>
+                                                    <input type="radio" name="payment_method" value="Stripe">
+                                                    <img src="{% static 'images/stripe.png' %}" alt="Stripe" width="100">
+                                                </label>
 
-                                            <button type="submit" class ="btn btn-danger w-100 p-2 mt-3"> Place Order</button>
+
+                                            </div>
+                                            <span class="text-danger" id="payment-method-error"></span>
+
+                                            <!-- Select Payment method  -->
+
+                                            <button onclick="return payMethodConfirm();" type="submit" class ="btn btn-danger w-100 p-2 mt-3"> Place Order</button>
                                         </ul>
                                     </div>
                                     <!-- end of form -->
@@ -174,6 +185,29 @@
     </div>
 </div>
 <!-- Main Section End -->
+
+<script>
+    function payMethodConfirm(){
+        var payMethod = $("input[name='payment_method']:checked").val()
+        if(!payMethod){
+            $('#payment-method-error').html("Please Select a Payment Method");
+            return false;
+        }else{
+            var conf = confirm('You have selected '+payMethod+' as you payment option.\n Click "OK" to continue.')
+            if(conf == true){
+                return;
+            }else{
+                return false;
+            }
+            
+        } 
+    }
+
+    $('input[name=payment_method]').on('change', function(){
+        $('#payment-method-error').html("");
+    })
+
+</script>
 
 
 
