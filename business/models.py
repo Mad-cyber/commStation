@@ -54,6 +54,7 @@ def save(self, *args, **kwargs):
                 context = {
                     'user': self.user,
                     'is_approved': self.is_approved,
+                    'to_email': self.user.email,
                 }
                 if self.is_approved:
                     # Send the approval email for business
