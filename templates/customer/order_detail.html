@@ -65,7 +65,7 @@
                                                         <td><img src="{{ item.menuitem.image.url }}" width="60" alt="order image"></td>
                                                         <td>
                                                            <p class="mb-0"> <b>{{ item.menuitem }}</b></p>
-                                                            <a class="text-muted" href="{% url 'business_detail' item.menuitem.business.bus_slug %}">{{ item.menuitem.business.business_name }}</a>
+                                                            <a class="text-muted" href="{% url 'business_detail' item.menuitem.business.bus_slug %}">{{ item.menuitem.business.bus_name }}</a>
                                                         </td>
                                                         <td>{{ item.menuitem.price }}</td>
                                                         <td>{{ item.quantity }}QTY</td>
@@ -132,11 +132,7 @@
                             
                                 </div>
                             
-                            </div>
-                           
-                            
-                                
-                            
+                            </div> 
                         </div>
                     </div>
                 </div>
