@@ -1,20 +1,18 @@
 from django.shortcuts import render , redirect
-from django.contrib.auth.hashers import make_password
-from django.urls import reverse
-
+from business.models import Business
 from business.forms import BussForm
-from django.utils.encoding import force_bytes
+
+from orders.models import Order
 from .forms import UserForm
 from .models import User, userProfile
 from django.contrib import messages, auth
 from django.contrib.auth import authenticate, get_user_model, login as auth_login
 from .utils import detectUser, send_verification_email
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 
 from django.core.exceptions import PermissionDenied
-from business.models import Business
 from django.template.defaultfilters import slugify
 
 # Create your views here.
@@ -42,11 +40,6 @@ def registerUser(request):
     elif request.method == 'POST':
         form = UserForm(request.POST)
         if form.is_valid():
-            # password = form.cleaned_data['password']
-            # user = form.save(commit=False)  # Create a User instance without saving to the database
-            # user.set_password(password)
-            # user.role = User.CUSTOMER  # Assign the role to the user
-            # user.save()  # Save the user to the database
 
             #create user from create usert method
             first_name = form.cleaned_data['first_name']
@@ -181,7 +174,14 @@ def bussDash(request):
 @login_required(login_url='login')
 @user_passes_test(check_role_customer)
 def custDash(request):
-    return render(request, 'accounts/custDash.html')
+    orders = Order.objects.filter(user=request.user, is_ordered=True)
+    recent_orders = orders[:5]
+    context = {
+        'orders': orders,
+        'orders_count': orders.count(),
+        'recent_orders': recent_orders,
+    }
+    return render(request, 'accounts/custDash.html', context)
 
 
 def forgot_password(request):
