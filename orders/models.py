@@ -1,7 +1,10 @@
+import json
 from django.db import models
 from accounts.models import User
 from menu.models import menuItem
 from business.models import Business
+
+request_object = ''
 
 # Create your models here.
 class Payment(models.Model):
@@ -55,6 +58,14 @@ class Order(models.Model):
     
     def order_placed_to(self):
         return ", ".join([str(i) for i in self.businesses.all()])
+    
+    def get_total_by_business(self):
+        business = Business.objects.get(user=request_object.user)
+        if self.total_data:
+            total_data = json.loads(self.total_data)
+            data = total_data.get(str(business.id))
+            print(data)
+        return business
     
     def __str__(self):
         return self.order_number

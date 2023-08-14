@@ -59,6 +59,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'orders.request_object.RequestObjectMiddleWare', #custom middleware created to access request object in models.py
+
 ]
 
 ROOT_URLCONF = 'commStation_main.urls'

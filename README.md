@@ -1,4 +1,5 @@
 # Communcation Station
+## By Kerrie Newman Ryan - x19135645 - National College of Ireland
 
 An efficient and user friendly online ordering and business management system called the Communcation Station. Powered by Django, Python and a suite of other modern technologies.
 
@@ -24,8 +25,8 @@ The following requirements must be met:
 
 1. **Clone the repository**:
     ```bash
-    git clone https://github.com/your-username/online-ordering-system.git
-    cd online-ordering-system
+    git clone https://github.com/Mad-cyber/commStation.git
+    cd commStation
     ```
 
 2. **Setup Virtual Environment**:
@@ -63,10 +64,6 @@ The following requirements must be met:
 
 2. **PayPal**:
    Ensure you have set up your [PayPal Developer](https://developer.paypal.com/) account. Integrate your client and secret keys as needed for processing transactions.
-
-## Contributing
-
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
 
