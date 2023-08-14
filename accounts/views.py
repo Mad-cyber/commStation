@@ -169,7 +169,16 @@ def myAccount(request):
 @login_required(login_url='login')
 @user_passes_test(check_role_buss)
 def bussDash(request):
-    return render(request, 'accounts/bussDash.html')
+    business = Business.objects.get(user=request.user)
+    orders = Order.objects.filter(businesses__in=[business.id],is_ordered=True).order_by('-created_at')
+    recent_orders = orders[:5]
+    #print(orders)
+    context = {
+        'orders': orders,
+        'orders_count': orders.count(),
+        'recent_orders': recent_orders,
+    }
+    return render(request, 'accounts/bussDash.html', context)
 
 @login_required(login_url='login')
 @user_passes_test(check_role_customer)

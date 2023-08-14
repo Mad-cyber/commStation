@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
-from marketplace.models import Cart
+from marketplace.models import Cart, Service
 from marketplace.context_processors import get_cart_amounts
+from menu.models import menuItem
 from .forms import OrderForm
 from .models import Order, Payment, OrderedItem
 import simplejson as json
@@ -18,6 +19,44 @@ def place_order(request):
     if cart_count <=0:
         return redirect('marketplace')
     
+    businesses_id = []
+    for i in cart_items:
+        if i.menuitem.business.id not in businesses_id:
+          businesses_id.append(i.menuitem.business.id)
+
+    #print(businesses_id)
+    #{"business_id":{"subtotal":{"tax_type": {"service_percentage": "service_amount"}}}}
+    get_service = Service.objects.filter(is_active=True)
+    subtotal = 0
+    total_data = {}
+    k = {}
+    for i in cart_items:
+        menuitem = menuItem.objects.get(pk=i.menuitem.id, business_id__in=businesses_id)
+        b_id = menuitem.business.id
+        if b_id in k:
+            subtotal = k[b_id]
+            subtotal += (menuitem.price * i.quantity)
+            k[b_id] = subtotal
+        else:
+            subtotal = (menuitem.price * i.quantity)
+            k[b_id] = subtotal
+
+        #Calculate the tax_data
+        tax_dict = {}
+        for i in get_service:
+            service_type = i.service_type
+            service_percentage = i.service_percentage
+            service_amount = round((service_percentage * subtotal)/100, 2)
+            tax_dict.update({service_type: {str(service_percentage): str(service_amount)}})
+        #print(tax_dict) Construct total data
+        total_data.update({menuitem.business.id: {str(subtotal): str(tax_dict)} })
+        # print(total_data)
+
+            #k.append(b_id)
+        #print(k)
+        #print(menuitem, menuitem.business.id)
+        # print(subtotal)
+
     sub_total = get_cart_amounts(request)['subtotal']
     total_tax = get_cart_amounts(request)['service_fee']
     grand_total = get_cart_amounts(request)['grand_total']
@@ -39,10 +78,12 @@ def place_order(request):
             order.user = request.user
             order.total = grand_total
             order.tax_data = json.dumps(tax_data)
+            order.total_data = json.dumps(total_data)
             order.total_tax = total_tax
             order.payment_method = request.POST['payment_method']
             order.save() # generate the id
             order.order_number = generate_order_number(order.id)
+            order.businesses.add(*businesses_id)
             order.save()
             context = {
                 'order': order,
@@ -124,7 +165,7 @@ def payments(request):
             send_notification(mail_subject, mail_template, context)
 
             #clear cart ofter payment post order
-            #cart_items.delete()
+            cart_items.delete()
             # return HttpResponse('Order Saved and Email Sent')
     
             #return back to ajax with success or failure message

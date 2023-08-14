@@ -1,6 +1,7 @@
 from django.db import models
 from accounts.models import User
 from menu.models import menuItem
+from business.models import Business
 
 # Create your models here.
 class Payment(models.Model):
@@ -28,6 +29,7 @@ class Order(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null=True)
+    businesses = models.ManyToManyField(Business,blank=True)
     order_number = models.CharField(max_length=20)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -38,7 +40,8 @@ class Order(models.Model):
     post_code = models.CharField(max_length=50, blank=True, null=True)
     country = models.CharField(max_length=20, blank=True, null=True)
     total = models.FloatField()
-    tax_data = models.JSONField(blank=True, help_text= "Data format: {'service_type':{'service_percentage':'tax_amount'}}")
+    tax_data = models.JSONField(blank=True, help_text= "Data format: {'service_type':{'service_percentage':'tax_amount'}}",null=True)
+    total_data = models.JSONField(blank=True, null=True)
     total_tax = models.FloatField()
     payment_method = models.CharField(max_length=20)
     status = models.CharField(max_length=20, choices=STATUS, default='New')
@@ -49,6 +52,9 @@ class Order(models.Model):
     @property
     def name(self):
         return f'{self.first_name} {self.last_name}'
+    
+    def order_placed_to(self):
+        return ", ".join([str(i) for i in self.businesses.all()])
     
     def __str__(self):
         return self.order_number

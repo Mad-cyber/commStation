@@ -1,6 +1,8 @@
 from http.client import HTTPResponse
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
+
+from orders.models import Order, OrderedItem
 from .forms import BussForm, OpenHoursForm
 from accounts.forms import UserProfileForm
 from django.db import IntegrityError
@@ -249,6 +251,24 @@ def remove_open_hours(request, pk=None):
             hour = get_object_or_404(OpenHours, pk=pk,)
             hour.delete()
             return JsonResponse({'status':'success','id':pk})
+        
+
+def order_detail(request, order_number):
+    try:
+        order = Order.objects.get(order_number=order_number, is_ordered=True)
+        #print(order)
+        ordered_item = OrderedItem.objects.filter(order=order, menuitem__business=get_business(request))
+        # print(ordered_item)
+        context = {
+            'order': order,
+            'ordered_item': ordered_item,
+             
+        }
+    except:
+        return redirect('business')
+
+    return render(request, 'business/order_detail.html', context)
+
 
 
  
